@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogOut, Image as ImageIcon, Coffee, Star, Calendar, LayoutDashboard, Menu as MenuIcon, X } from "lucide-react";
+import { LogOut, Image as ImageIcon, Coffee, Star, Calendar, LayoutDashboard, RefreshCw } from "lucide-react";
 import {
   logoutAdmin, createCategory, createMenuItem, updateMenuItem, deleteMenuItem,
   createGalleryImage, deleteGalleryImage,
@@ -40,7 +40,6 @@ export default function AdminDashboard({
   const router = useRouter();
   const [pending, start] = useTransition();
   const [tab, setTab] = useState<Tab>("menu");
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const run = (fn: () => Promise<unknown>) => start(async () => { 
     await fn(); 
@@ -55,97 +54,39 @@ export default function AdminDashboard({
   ];
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] flex flex-col md:flex-row font-[family-name:var(--font-body)]">
-      {/* Mobile Header */}
-      <header className="md:hidden flex items-center justify-between p-4 bg-[var(--color-bg)]/80 backdrop-blur-md border-b border-[rgba(255,255,255,0.05)] sticky top-0 z-50">
-        <span className="font-[family-name:var(--font-heading)] text-xl text-[var(--color-primary)] font-medium tracking-tight flex items-center gap-2">
-          <LayoutDashboard className="text-[var(--color-cta)]" size={20} />
-          Motherland Admin
-        </span>
-        <button onClick={() => setMobileMenuOpen(true)} className="p-2 text-[var(--color-primary)] bg-[rgba(255,255,255,0.05)] rounded-full hover:bg-[rgba(255,255,255,0.1)] transition-colors">
-          <MenuIcon size={20} />
-        </button>
-      </header>
-
-      {/* Mobile Sidebar Overlay */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setMobileMenuOpen(false)}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] md:hidden"
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-[70] w-72 bg-[#1A1512] border-r border-[rgba(212,175,55,0.1)] flex flex-col transform transition-transform duration-300 ease-out md:translate-x-0 md:static shadow-2xl md:shadow-none ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
-        <div className="p-6 md:p-8 flex justify-between items-center">
-          <span className="font-[family-name:var(--font-heading)] text-2xl text-[var(--color-primary)] font-medium tracking-tight flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[var(--color-cta)] flex items-center justify-center shadow-[0_0_15px_rgba(212,175,55,0.3)]">
-              <LayoutDashboard className="text-[#1A1311]" size={18} />
-            </div>
-            Motherland
-          </span>
-          <button onClick={() => setMobileMenuOpen(false)} className="p-2 text-[var(--color-muted)] hover:text-white md:hidden">
-            <X size={20} />
-          </button>
-        </div>
-        
-        <nav className="flex-1 px-4 md:px-6 py-2 space-y-2 overflow-y-auto custom-scrollbar">
-          {TABS.map((t) => (
-            <button
-              key={t.id}
-              onClick={() => { setTab(t.id); setMobileMenuOpen(false); }}
-              className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-all group ${
-                tab === t.id 
-                  ? "bg-[rgba(212,175,55,0.1)] text-[var(--color-cta)] border border-[rgba(212,175,55,0.2)] shadow-lg" 
-                  : "text-[var(--color-secondary)] border border-transparent hover:bg-[rgba(255,255,255,0.03)] hover:text-[var(--color-primary)]"
-              }`}
-            >
-              <t.icon size={18} className={`transition-transform duration-300 ${tab === t.id ? "scale-110" : "group-hover:scale-110"}`} />
-              {t.label}
-              {t.count ? (
-                <span className={`ml-auto px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                  tab === t.id ? "bg-[var(--color-cta)] text-[#1A1311]" : "bg-[rgba(212,175,55,0.2)] text-[var(--color-cta)]"
-                }`}>
-                  {t.count} New
-                </span>
-              ) : null}
-            </button>
-          ))}
-        </nav>
-
-        <div className="p-4 md:p-6 border-t border-[rgba(212,175,55,0.1)] bg-[rgba(0,0,0,0.2)]">
-          <a href="/" target="_blank" className="w-full mb-3 flex items-center justify-center gap-2 py-2 text-sm text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-colors group">
-            View Live Site 
-            <span className="transform transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">↗</span>
-          </a>
-          <button onClick={() => run(logoutAdmin)} className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold text-red-400 bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-all shadow-[0_0_15px_rgba(220,38,38,0.05)]">
-            <LogOut size={16} /> Logout
-          </button>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 p-4 sm:p-6 md:p-10 overflow-y-auto w-full max-w-[1400px] mx-auto custom-scrollbar relative">
-        <div className="flex justify-between items-end mb-10 hidden md:flex">
-          <div>
-            <h1 className="font-[family-name:var(--font-heading)] text-4xl text-[var(--color-primary)] font-medium mb-2">
-              {TABS.find(t => t.id === tab)?.label}
-            </h1>
-            <p className="text-sm text-[var(--color-muted)]">Manage your cafe's content and bookings.</p>
+    <div className="min-h-screen bg-[var(--color-bg)] font-[family-name:var(--font-body)]">
+      {/* Top bar */}
+      <div className="bg-[#1A1512] px-4 md:px-8 py-4 flex items-center justify-between border-b border-[rgba(212,175,55,0.1)] sticky top-0 z-50 shadow-2xl">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-[var(--color-cta)] flex items-center justify-center shadow-[0_0_15px_rgba(212,175,55,0.3)] shrink-0">
+            <LayoutDashboard className="text-[#1A1311]" size={18} />
           </div>
+          <span className="text-[var(--color-primary)] font-medium text-xl font-[family-name:var(--font-heading)] hidden sm:inline-block">Motherland Admin</span>
+          <span className="text-[var(--color-primary)] font-medium text-xl font-[family-name:var(--font-heading)] sm:hidden">Motherland</span>
         </div>
+        <div className="flex items-center gap-4 sm:gap-6">
+          <a href="/" target="_blank" className="hidden md:flex items-center gap-1.5 text-[var(--color-secondary)] hover:text-[var(--color-primary)] text-sm transition-colors group font-bold">
+            Live Site <span className="transform transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">↗</span>
+          </a>
+          <button onClick={() => router.refresh()} disabled={pending}
+            className="flex items-center gap-1.5 text-[var(--color-secondary)] hover:text-[var(--color-primary)] text-sm transition-colors font-bold disabled:opacity-50">
+            <RefreshCw size={14} className={pending ? 'animate-spin' : ''} /> <span className="hidden sm:inline">Refresh</span>
+          </button>
+          <div className="w-px h-4 bg-[rgba(255,255,255,0.1)] hidden sm:block"></div>
+          <button onClick={() => run(logoutAdmin)} disabled={pending}
+            className="flex items-center gap-1.5 text-red-400 hover:text-red-300 text-sm transition-colors font-bold disabled:opacity-50">
+            <LogOut size={14} /> <span className="hidden sm:inline">Exit</span>
+          </button>
+        </div>
+      </div>
 
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8 relative">
         {/* Loading Overlay for pending transitions */}
         <AnimatePresence>
           {pending && (
             <motion.div 
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-4 py-2 bg-[var(--color-bg)] border border-[var(--color-cta)] rounded-full shadow-[0_0_20px_rgba(212,175,55,0.2)] flex items-center gap-3"
+              initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
+              className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] px-4 py-2 bg-[#1A1512] border border-[var(--color-cta)] rounded-full shadow-[0_0_20px_rgba(212,175,55,0.2)] flex items-center gap-3"
             >
               <div className="w-4 h-4 border-2 border-[var(--color-cta)] border-t-transparent rounded-full animate-spin"></div>
               <span className="text-xs font-bold text-[var(--color-primary)] tracking-widest uppercase">Saving changes...</span>
@@ -153,6 +94,44 @@ export default function AdminDashboard({
           )}
         </AnimatePresence>
 
+        {/* Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          {[
+            { label: 'Menu Items', value: categories.reduce((sum, c) => sum + c.items.length, 0), color: 'text-[var(--color-primary)]' },
+            { label: 'Gallery Images', value: galleryImages.length, color: 'text-[var(--color-primary)]' },
+            { label: 'Total Reviews', value: reviews.length, color: 'text-[var(--color-primary)]' },
+            { label: 'Pending Reserves', value: reservations.filter(r => r.status === 'pending').length, color: 'text-[var(--color-cta)]' },
+          ].map(stat => (
+            <div key={stat.label} className="bg-[rgba(255,255,255,0.02)] rounded-xl p-5 border border-[rgba(255,255,255,0.05)] hover:border-[rgba(212,175,55,0.2)] transition-colors shadow-lg">
+              <p className="text-xs text-[var(--color-muted)] uppercase tracking-wider font-semibold">{stat.label}</p>
+              <p className={`text-3xl font-[family-name:var(--font-heading)] font-bold mt-2 ${stat.color}`}>{stat.value}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Tabs */}
+        <div className="flex flex-wrap items-center gap-4 mb-8">
+          <div className="flex flex-wrap bg-[rgba(255,255,255,0.02)] rounded-2xl border border-[rgba(255,255,255,0.05)] p-1.5 shadow-lg max-w-full overflow-x-auto custom-scrollbar">
+            {TABS.map(t => (
+              <button key={t.id} onClick={() => setTab(t.id)}
+                className={`flex items-center gap-2 px-4 sm:px-6 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
+                  tab === t.id 
+                    ? 'bg-[var(--color-cta)] text-[#1A1311] shadow-[0_0_15px_rgba(212,175,55,0.3)]' 
+                    : 'text-[var(--color-secondary)] hover:text-[var(--color-primary)] hover:bg-[rgba(255,255,255,0.05)]'
+                  }`}>
+                <t.icon size={16} className={tab === t.id ? '' : 'opacity-70'} />
+                {t.label}
+                {(t.count ?? 0) > 0 && (
+                  <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ml-1 ${tab === t.id ? 'bg-[#1A1311]/20 text-[#1A1311]' : 'bg-[rgba(212,175,55,0.2)] text-[var(--color-cta)]'}`}>
+                    {t.count} New
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Content */}
         <AnimatePresence mode="wait">
           <motion.div
             key={tab}
@@ -197,23 +176,22 @@ export default function AdminDashboard({
             )}
           </motion.div>
         </AnimatePresence>
-      </main>
+      </div>
 
-      {/* Global Dashboard Styles */}
       <style>{`
         .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-          height: 6px;
+          height: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
           background: rgba(255, 255, 255, 0.02);
+          border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(212, 175, 55, 0.3);
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.2);
+          background: rgba(212, 175, 55, 0.5);
         }
       `}</style>
     </div>
