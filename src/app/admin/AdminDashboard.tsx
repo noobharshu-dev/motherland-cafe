@@ -56,25 +56,20 @@ export default function AdminDashboard({
   return (
     <div className="min-h-screen bg-[var(--color-bg)] font-[family-name:var(--font-body)]">
       {/* Top bar */}
-      <div className="bg-[#1A1512] px-4 md:px-8 py-4 flex items-center justify-between border-b border-[rgba(212,175,55,0.1)] sticky top-0 z-50 shadow-2xl">
+      <div className="bg-[#1A1512] px-6 py-4 flex items-center justify-between shadow-2xl">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-[var(--color-cta)] flex items-center justify-center shadow-[0_0_15px_rgba(212,175,55,0.3)] shrink-0">
-            <LayoutDashboard className="text-[#1A1311]" size={18} />
-          </div>
+          <Coffee size={20} className="text-[var(--color-cta)]" />
           <span className="text-[var(--color-primary)] font-medium text-xl font-[family-name:var(--font-heading)] hidden sm:inline-block">Motherland Admin</span>
           <span className="text-[var(--color-primary)] font-medium text-xl font-[family-name:var(--font-heading)] sm:hidden">Motherland</span>
         </div>
         <div className="flex items-center gap-4 sm:gap-6">
-          <a href="/" target="_blank" className="hidden md:flex items-center gap-1.5 text-[var(--color-secondary)] hover:text-[var(--color-primary)] text-sm transition-colors group font-bold">
-            Live Site <span className="transform transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">↗</span>
-          </a>
           <button onClick={() => router.refresh()} disabled={pending}
             className="flex items-center gap-1.5 text-[var(--color-secondary)] hover:text-[var(--color-primary)] text-sm transition-colors font-bold disabled:opacity-50">
             <RefreshCw size={14} className={pending ? 'animate-spin' : ''} /> <span className="hidden sm:inline">Refresh</span>
           </button>
           <div className="w-px h-4 bg-[rgba(255,255,255,0.1)] hidden sm:block"></div>
           <button onClick={() => run(logoutAdmin)} disabled={pending}
-            className="flex items-center gap-1.5 text-red-400 hover:text-red-300 text-sm transition-colors font-bold disabled:opacity-50">
+            className="flex items-center gap-1.5 text-[var(--color-secondary)] hover:text-red-400 text-sm transition-colors font-bold disabled:opacity-50">
             <LogOut size={14} /> <span className="hidden sm:inline">Exit</span>
           </button>
         </div>
@@ -97,12 +92,12 @@ export default function AdminDashboard({
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { label: 'Menu Items', value: categories.reduce((sum, c) => sum + c.items.length, 0), color: 'text-[var(--color-primary)]' },
-            { label: 'Gallery Images', value: galleryImages.length, color: 'text-[var(--color-primary)]' },
-            { label: 'Total Reviews', value: reviews.length, color: 'text-[var(--color-primary)]' },
+            { label: 'Menu Items', value: categories.reduce((sum, c) => sum + c.items.length, 0), color: 'text-orange-400' },
+            { label: 'Gallery Images', value: galleryImages.length, color: 'text-blue-400' },
+            { label: 'Total Reviews', value: reviews.length, color: 'text-green-400' },
             { label: 'Pending Reserves', value: reservations.filter(r => r.status === 'pending').length, color: 'text-[var(--color-cta)]' },
           ].map(stat => (
-            <div key={stat.label} className="bg-[rgba(255,255,255,0.02)] rounded-xl p-5 border border-[rgba(255,255,255,0.05)] hover:border-[rgba(212,175,55,0.2)] transition-colors shadow-lg">
+            <div key={stat.label} className="bg-[var(--color-surface)] rounded-xl p-5 border border-[rgba(255,255,255,0.05)] hover:border-[rgba(212,175,55,0.2)] transition-colors shadow-lg">
               <p className="text-xs text-[var(--color-muted)] uppercase tracking-wider font-semibold">{stat.label}</p>
               <p className={`text-3xl font-[family-name:var(--font-heading)] font-bold mt-2 ${stat.color}`}>{stat.value}</p>
             </div>
@@ -110,20 +105,20 @@ export default function AdminDashboard({
         </div>
 
         {/* Tabs */}
-        <div className="flex flex-wrap items-center gap-4 mb-8">
-          <div className="flex flex-wrap bg-[rgba(255,255,255,0.02)] rounded-2xl border border-[rgba(255,255,255,0.05)] p-1.5 shadow-lg max-w-full overflow-x-auto custom-scrollbar">
+        <div className="flex flex-wrap items-center gap-4 mb-6">
+          <div className="flex bg-[var(--color-surface)] rounded-xl border border-[rgba(255,255,255,0.05)] p-1 shadow-md max-w-full overflow-x-auto custom-scrollbar">
             {TABS.map(t => (
               <button key={t.id} onClick={() => setTab(t.id)}
-                className={`flex items-center gap-2 px-4 sm:px-6 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
                   tab === t.id 
                     ? 'bg-[var(--color-cta)] text-[#1A1311] shadow-[0_0_15px_rgba(212,175,55,0.3)]' 
-                    : 'text-[var(--color-secondary)] hover:text-[var(--color-primary)] hover:bg-[rgba(255,255,255,0.05)]'
+                    : 'text-[var(--color-secondary)] hover:text-[var(--color-primary)]'
                   }`}>
-                <t.icon size={16} className={tab === t.id ? '' : 'opacity-70'} />
+                <t.icon size={15} />
                 {t.label}
                 {(t.count ?? 0) > 0 && (
-                  <span className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ml-1 ${tab === t.id ? 'bg-[#1A1311]/20 text-[#1A1311]' : 'bg-[rgba(212,175,55,0.2)] text-[var(--color-cta)]'}`}>
-                    {t.count} New
+                  <span className={`text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-full ${tab === t.id ? 'bg-[#1A1311]/20 text-[#1A1311]' : 'bg-[rgba(255,255,255,0.1)] text-[var(--color-primary)]'}`}>
+                    {t.count}
                   </span>
                 )}
               </button>
