@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { LogOut, Image as ImageIcon, Coffee, Star, Calendar, LayoutDashboard, Menu as MenuIcon, X } from "lucide-react";
 import {
-  logoutAdmin, createMenuItem, updateMenuItem, deleteMenuItem,
+  logoutAdmin, createCategory, createMenuItem, updateMenuItem, deleteMenuItem,
   createGalleryImage, deleteGalleryImage,
   createReview, toggleReviewPublished, deleteReview,
   updateReservationStatus,
@@ -165,6 +165,7 @@ export default function AdminDashboard({
             {tab === "menu" && (
               <MenuManager 
                 categories={categories} 
+                onCreateCategory={(name) => run(() => createCategory(name, categories.length))}
                 onCreate={(item) => run(() => createMenuItem(item))}
                 onUpdate={(id, item) => run(() => updateMenuItem(id, item))}
                 onDelete={(id) => run(() => deleteMenuItem(id))}

@@ -13,12 +13,13 @@ const BLANK_ITEM = { categoryId:"", name:"", description:"", price:0, imageUrl:"
 
 interface MenuManagerProps {
   categories: Cat[];
+  onCreateCategory?: (name: string) => void;
   onCreate: (item: any) => void;
   onUpdate: (id: string, item: any) => void;
   onDelete: (id: string) => void;
 }
 
-export default function MenuManager({ categories, onCreate, onUpdate, onDelete }: MenuManagerProps) {
+export default function MenuManager({ categories, onCreateCategory, onCreate, onUpdate, onDelete }: MenuManagerProps) {
   const [catId, setCatId] = useState(categories[0]?.id ?? "");
   const [editItem, setEditItem] = useState<MI | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -76,12 +77,22 @@ export default function MenuManager({ categories, onCreate, onUpdate, onDelete }
             </button>
           ))}
         </div>
-        <button
-          className="flex items-center gap-2 px-5 py-2.5 bg-[var(--color-cta)] text-[#1A1311] rounded-full text-sm font-bold whitespace-nowrap hover:bg-[#B8972E] transition-all shadow-[0_0_15px_rgba(212,175,55,0.2)]"
-          onClick={openNewModal}
-        >
-          <Plus size={16} /> Add Item
-        </button>
+        <div className="flex items-center gap-2">
+          {onCreateCategory && (
+            <button
+              className="flex items-center gap-2 px-5 py-2.5 btn-outline text-sm font-bold whitespace-nowrap"
+              onClick={() => { const name = prompt("Enter category name"); if(name) onCreateCategory(name); }}
+            >
+              <Plus size={16} /> New Category
+            </button>
+          )}
+          <button
+            className="flex items-center gap-2 px-5 py-2.5 btn-primary bg-[var(--color-cta)] text-[#1A1311] rounded-full text-sm font-bold whitespace-nowrap hover:bg-[#B8972E] transition-all"
+            onClick={openNewModal}
+          >
+            <Plus size={16} /> Add Item
+          </button>
+        </div>
       </div>
 
       {/* Grid Layout (Bento Style) */}
@@ -107,7 +118,7 @@ export default function MenuManager({ categories, onCreate, onUpdate, onDelete }
               
               <div className="flex gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
-                  className="flex-1 flex justify-center items-center gap-1 py-1.5 bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.1)] text-[var(--color-primary)] rounded-lg text-xs font-medium transition-colors"
+                  className="flex-1 flex justify-center items-center gap-1 py-1.5 btn-outline text-[var(--color-primary)] rounded-lg text-xs font-medium transition-colors"
                   onClick={() => openEditModal(item)}
                 >
                   <Edit2 size={12} /> Edit
@@ -200,13 +211,13 @@ export default function MenuManager({ categories, onCreate, onUpdate, onDelete }
 
         <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-[rgba(255,255,255,0.05)]">
           <button
-            className="px-6 py-2.5 bg-transparent text-[var(--color-primary)] border border-[rgba(255,255,255,0.1)] rounded-xl text-sm font-bold hover:bg-[rgba(255,255,255,0.05)] transition-colors"
+            className="px-6 py-2.5 btn-outline text-[var(--color-primary)] border border-[rgba(255,255,255,0.1)] rounded-xl text-sm font-bold hover:bg-[rgba(255,255,255,0.05)] transition-colors"
             onClick={() => setShowModal(false)}
           >
             Cancel
           </button>
           <button
-            className="px-6 py-2.5 bg-[var(--color-cta)] text-[#1A1311] rounded-xl text-sm font-bold hover:bg-[#B8972E] transition-colors"
+            className="px-6 py-2.5 btn-primary bg-[var(--color-cta)] text-[#1A1311] rounded-xl text-sm font-bold hover:bg-[#B8972E] transition-colors"
             onClick={handleSave}
           >
             {editItem ? "Save Changes" : "Add Menu Item"}
