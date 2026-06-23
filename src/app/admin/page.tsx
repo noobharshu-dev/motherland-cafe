@@ -39,20 +39,25 @@ export default async function AdminPage() {
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unknown error";
     return (
-      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--color-bg)", fontFamily: "var(--font-body)" }}>
-        <div style={{ maxWidth: "480px", padding: "2.5rem", background: "white", borderRadius: "16px", border: "1px solid rgba(220,38,38,0.2)", boxShadow: "0 4px 24px rgba(120,53,15,0.1)" }}>
-          <h2 style={{ fontFamily: "var(--font-heading)", color: "#DC2626", marginBottom: "1rem" }}>Database Unreachable</h2>
-          <p style={{ fontSize: "0.9rem", color: "var(--color-secondary)", lineHeight: 1.7, marginBottom: "1.25rem" }}>
-            Neon free-tier databases sleep after inactivity. <strong>Wait 5 seconds and refresh the page</strong> — it will wake up automatically.
+      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 font-[family-name:var(--font-body)]">
+        <div className="w-full max-w-md bg-[rgba(255,255,255,0.02)] backdrop-blur-xl border border-[rgba(220,38,38,0.2)] rounded-3xl p-8 shadow-[0_8px_32px_rgba(0,0,0,0.4)] text-center relative overflow-hidden">
+          {/* Subtle red glow */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[200px] h-[100px] bg-red-500/10 blur-[50px] pointer-events-none" />
+          
+          <h2 className="font-[family-name:var(--font-heading)] text-2xl text-red-400 mb-4 relative z-10">Database Unreachable</h2>
+          <p className="text-sm text-[var(--color-secondary)] leading-relaxed mb-6 relative z-10">
+            Neon free-tier databases sleep after inactivity. <strong className="text-[var(--color-primary)]">Wait 5 seconds and refresh the page</strong> — it will wake up automatically.
           </p>
-          <p style={{ fontSize: "0.78rem", color: "var(--color-secondary)", opacity: 0.65, marginBottom: "1.5rem", wordBreak: "break-all" }}>
-            Error: {msg.slice(0, 200)}
-          </p>
-          <div style={{ display: "flex", gap: "0.75rem" }}>
-            <a href="/admin" style={{ display: "inline-flex", padding: "0.6rem 1.25rem", background: "var(--color-primary)", color: "var(--color-bg)", borderRadius: "8px", textDecoration: "none", fontSize: "0.85rem", fontWeight: 700 }}>
-              Retry
+          <div className="bg-[rgba(0,0,0,0.3)] border border-[rgba(255,255,255,0.05)] rounded-xl p-4 mb-8 text-left overflow-x-auto relative z-10 custom-scrollbar">
+            <p className="text-xs text-[var(--color-muted)] font-mono whitespace-pre-wrap break-words opacity-80">
+              Error: {msg.slice(0, 250)}...
+            </p>
+          </div>
+          <div className="flex flex-col gap-4 items-center relative z-10">
+            <a href="/admin" className="px-8 py-3 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl text-sm font-bold hover:bg-red-500/20 transition-colors shadow-[0_0_15px_rgba(220,38,38,0.1)]">
+              Refresh Page
             </a>
-            <p style={{ fontSize: "0.75rem", color: "var(--color-secondary)", opacity: 0.55, alignSelf: "center" }}>
+            <p className="text-xs text-[var(--color-muted)] opacity-60">
               Also check DATABASE_URL in .env.local
             </p>
           </div>
