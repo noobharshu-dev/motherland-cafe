@@ -140,7 +140,8 @@ export default function MenuManager({ categories, onCreate, onUpdate, onDelete }
               value={itemF.categoryId}
               onChange={e => setItemF(f => ({ ...f, categoryId: e.target.value }))}
             >
-              {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              <option value="" disabled>Select a category...</option>
+              {categories.map(c => <option key={c.id} value={c.id} className="bg-[var(--color-surface)] text-white">{c.name}</option>)}
             </select>
           </div>
           <div>

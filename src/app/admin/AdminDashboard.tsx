@@ -81,11 +81,11 @@ export default function AdminDashboard({
       </AnimatePresence>
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-[70] w-72 bg-[var(--color-bg)] border-r border-[rgba(255,255,255,0.05)] flex flex-col transform transition-transform duration-300 ease-out md:translate-x-0 md:static shadow-2xl md:shadow-none ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
+      <aside className={`fixed inset-y-0 left-0 z-[70] w-72 bg-[#1A1512] border-r border-[rgba(212,175,55,0.1)] flex flex-col transform transition-transform duration-300 ease-out md:translate-x-0 md:static shadow-2xl md:shadow-none ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div className="p-6 md:p-8 flex justify-between items-center">
           <span className="font-[family-name:var(--font-heading)] text-2xl text-[var(--color-primary)] font-medium tracking-tight flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-[rgba(255,255,255,0.05)] flex items-center justify-center border border-[rgba(255,255,255,0.1)]">
-              <LayoutDashboard className="text-[var(--color-cta)]" size={18} />
+            <div className="w-8 h-8 rounded-lg bg-[var(--color-cta)] flex items-center justify-center shadow-[0_0_15px_rgba(212,175,55,0.3)]">
+              <LayoutDashboard className="text-[#1A1311]" size={18} />
             </div>
             Motherland
           </span>
@@ -94,22 +94,22 @@ export default function AdminDashboard({
           </button>
         </div>
         
-        <nav className="flex-1 px-4 md:px-6 py-2 space-y-1.5 overflow-y-auto custom-scrollbar">
+        <nav className="flex-1 px-4 md:px-6 py-2 space-y-2 overflow-y-auto custom-scrollbar">
           {TABS.map((t) => (
             <button
               key={t.id}
               onClick={() => { setTab(t.id); setMobileMenuOpen(false); }}
               className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-all group ${
                 tab === t.id 
-                  ? "bg-[rgba(255,255,255,0.05)] text-[var(--color-primary)] border border-[rgba(255,255,255,0.05)] shadow-lg" 
-                  : "text-[var(--color-secondary)] border border-transparent hover:bg-[rgba(255,255,255,0.02)] hover:border-[rgba(255,255,255,0.02)]"
+                  ? "bg-[rgba(212,175,55,0.1)] text-[var(--color-cta)] border border-[rgba(212,175,55,0.2)] shadow-lg" 
+                  : "text-[var(--color-secondary)] border border-transparent hover:bg-[rgba(255,255,255,0.03)] hover:text-[var(--color-primary)]"
               }`}
             >
-              <t.icon size={18} className={`transition-colors ${tab === t.id ? "text-[var(--color-cta)]" : "text-[var(--color-muted)] group-hover:text-[var(--color-secondary)]"}`} />
+              <t.icon size={18} className={`transition-transform duration-300 ${tab === t.id ? "scale-110" : "group-hover:scale-110"}`} />
               {t.label}
               {t.count ? (
                 <span className={`ml-auto px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                  tab === t.id ? "bg-[var(--color-cta)] text-[#1A1311]" : "bg-yellow-500/10 text-yellow-500"
+                  tab === t.id ? "bg-[var(--color-cta)] text-[#1A1311]" : "bg-[rgba(212,175,55,0.2)] text-[var(--color-cta)]"
                 }`}>
                   {t.count} New
                 </span>
@@ -118,7 +118,7 @@ export default function AdminDashboard({
           ))}
         </nav>
 
-        <div className="p-4 md:p-6 border-t border-[rgba(255,255,255,0.05)] bg-[rgba(0,0,0,0.2)]">
+        <div className="p-4 md:p-6 border-t border-[rgba(212,175,55,0.1)] bg-[rgba(0,0,0,0.2)]">
           <a href="/" target="_blank" className="w-full mb-3 flex items-center justify-center gap-2 py-2 text-sm text-[var(--color-secondary)] hover:text-[var(--color-primary)] transition-colors group">
             View Live Site 
             <span className="transform transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5">↗</span>
