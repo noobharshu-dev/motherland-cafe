@@ -1,0 +1,276 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+/* ── Design Tokens ─────────────────────────────────────────── */
+:root {
+  --color-primary:    #FBF9F6; /* Ivory text */
+  --color-secondary:  #A89F91; /* Latte foam */
+  --color-cta:        #D4AF37; /* Elegant muted gold */
+  --color-bg:         #14100D; /* Deep espresso black */
+  --color-text:       #FBF9F6;
+  --color-muted:      #A89F91;
+  --color-surface:    #211A15; /* Mocha surface */
+  --color-border:     rgba(251, 249, 246, 0.1);
+
+  --font-heading: 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'Outfit', system-ui, sans-serif;
+
+  --radius-sm:  0.5rem;
+  --radius-md:  0.75rem;
+  --radius-lg:  1.25rem;
+  --radius-xl:  2rem;
+
+  --shadow-subtle: 0 4px 24px rgba(0, 0, 0, 0.2);
+  --shadow-warm:   0 12px 40px rgba(0, 0, 0, 0.4);
+  --shadow-glow:   0 8px 32px rgba(212, 175, 55, 0.25);
+}
+
+/* ── Base Reset ───────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+html.lenis, html.lenis body {
+  scroll-behavior: auto !important;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Heading Utility ─────────────────────────────────────── */
+.heading {
+  font-family: var(--font-heading);
+  color: var(--color-primary);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.heading-display {
+  font-family: var(--font-heading);
+  font-size: clamp(3.5rem, 9vw, 9rem);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--color-primary);
+}
+
+/* ── Button Utilities ────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 2rem;
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 300ms cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.btn-primary:hover {
+  background-color: #E6E1D8;
+  color: #14100D;
+  box-shadow: var(--shadow-warm);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 2rem;
+  background-color: transparent;
+  color: var(--color-primary);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(251, 249, 246, 0.2);
+  border-radius: 999px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 300ms cubic-bezier(0.25, 1, 0.5, 1);
+  backdrop-filter: blur(8px);
+}
+
+.btn-outline:hover {
+  background-color: var(--color-primary);
+  color: #14100D;
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+/* ── Glass Navbar Surface ─────────────────────────────────── */
+.navbar-glass {
+  background: rgba(33, 26, 21, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(251, 249, 246, 0.05);
+}
+
+/* ── Section spacing ─────────────────────────────────────── */
+.section {
+  padding-block: 7rem;
+}
+
+.section-sm {
+  padding-block: 4rem;
+}
+
+@media (max-width: 768px) {
+  .section { padding-block: 5rem; }
+  .section-sm { padding-block: 3rem; }
+}
+
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+/* ── Badge Utilities ─────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.badge-veg {
+  background: rgba(209, 250, 229, 0.9);
+  color: #065F46;
+}
+
+.badge-vegan {
+  background: rgba(220, 252, 231, 0.9);
+  color: #14532D;
+}
+
+.badge-gf {
+  background: rgba(254, 249, 195, 0.9);
+  color: #713F12;
+}
+
+/* ── Divider ─────────────────────────────────────────────── */
+.divider {
+  width: 3rem;
+  height: 1px;
+  background-color: var(--color-cta);
+}
+
+/* ── Card ────────────────────────────────────────────────── */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-subtle);
+  transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Removed .card:hover as it conflicts with Framer Motion whileHover */
+
+/* ── Scroll-aware reduced motion ─────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+/* -- Global Link Hover -------------------------------------- */
+a:not(.btn-primary):not(.btn-outline) {
+  transition: opacity 200ms ease;
+}
+
+a:not(.btn-primary):not(.btn-outline):hover {
+  opacity: 1 !important;
+}
+
+/* ── CTA large button (server-rendered) ────────────────────── */
+.btn-cta-large {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1rem 2.25rem;
+  background: var(--color-cta);
+  color: var(--color-bg);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--color-cta);
+  cursor: pointer;
+  transition: background 200ms, color 200ms, transform 150ms;
+  flex-shrink: 0;
+}
+.btn-cta-large:hover {
+  background: transparent;
+  color: var(--color-cta);
+  transform: translateY(-2px);
+}
+
+/* ── Performance: offscreen sections ───────────────────────── */
+.section {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 600px;
+}
+
+/* ── Sticky card stack (mobile menu) ────────────────────────── */
+.mobile-stack-section {
+  position: relative;
+  padding-bottom: 2rem;
+}
+.sticky-card-wrapper {
+  position: sticky;
+  top: 80px;
+  margin-bottom: 1rem;
+}
+.sticky-card-inner {
+  border-radius: 28px;
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid rgba(251,249,246,0.06);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.35);
+  transform-origin: top center;
+  transition: transform 0.3s ease;
+  will-change: transform;
+}

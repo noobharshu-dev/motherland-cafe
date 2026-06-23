@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Reservation {
+  id              String   @id @default(cuid())
+  name            String
+  phone           String
+  email           String
+  guests          Int
+  reservationDate String
+  reservationTime String
+  notes           String?
+  status          String   @default("pending")
+  createdAt       DateTime @default(now())
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  name        String
+  rating      Int
+  reviewText  String
+  source      String   @default("Google")
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model GalleryImage {
+  id           String  @id @default(cuid())
+  imageUrl     String
+  title        String
+  category     String
+  isPublished  Boolean @default(true)
+  displayOrder Int     @default(0)
+}
+
+model MenuCategory {
+  id           String     @id @default(cuid())
+  name         String
+  displayOrder Int
+  items        MenuItem[]
+}
+
+model MenuItem {
+  id           String       @id @default(cuid())
+  categoryId   String
+  category     MenuCategory @relation(fields: [categoryId], references: [id])
+  name         String
+  description  String
+  price        Float
+  imageUrl     String
+  isVegetarian Boolean      @default(false)
+  isVegan      Boolean      @default(false)
+  isGlutenFree Boolean      @default(false)
+  isFeatured   Boolean      @default(false)
+}
