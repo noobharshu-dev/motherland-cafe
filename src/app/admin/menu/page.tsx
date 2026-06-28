@@ -62,9 +62,18 @@ export default function MenuManagement() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Delete this item?')) return;
-    const res = await fetch(`/api/menu/items/${id}`, { method: 'DELETE' });
-    if (res.ok) setItems(prev => prev.filter(i => i.id !== id));
+    if (!window.confirm('Delete this item?')) return;
+    try {
+      const res = await fetch(`/api/menu/items/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        setItems(prev => prev.filter(i => i.id !== id));
+      } else {
+        const err = await res.json().catch(() => ({}));
+        alert(`Failed to delete: ${err.error || res.status}`);
+      }
+    } catch (err: any) {
+      alert(`Error deleting item: ${err.message}`);
+    }
   };
 
   const openEditModal = (item: any) => {
@@ -391,7 +400,7 @@ function ItemModal({ onClose, onSaved, categories, editingItem }: { onClose: () 
     e.preventDefault();
 
     // Frontend validation
-    if (!formData.name.trim()) { alert('Please enter an item name.'); return; }
+    if (!(formData.name || '').trim()) { alert('Please enter an item name.'); return; }
     if (!formData.price || isNaN(parseFloat(formData.price as any))) { alert('Please enter a valid price.'); return; }
     if (!formData.categoryId) { alert('Please select a category. If no categories exist yet, create one first using \'Add Category\'.'); return; }
 
@@ -547,14 +556,14 @@ function ItemModal({ onClose, onSaved, categories, editingItem }: { onClose: () 
           <button
             type="button"
             onClick={handleSubmit}
-            disabled={saving || !formData.categoryId || !formData.name.trim()}
+            disabled={saving}
             style={{
-              background: (saving || !formData.categoryId || !formData.name.trim()) ? '#555' : '#d4af37',
+              background: saving ? '#555' : '#d4af37',
               color: '#000', border: 'none', borderRadius: '4px', padding: '12px 32px',
               textTransform: 'uppercase', fontSize: '12px', fontWeight: 600,
-              cursor: (saving || !formData.categoryId || !formData.name.trim()) ? 'not-allowed' : 'pointer',
+              cursor: saving ? 'not-allowed' : 'pointer',
               display: 'flex', alignItems: 'center', gap: '8px',
-              opacity: (saving || !formData.categoryId || !formData.name.trim()) ? 0.6 : 1,
+              opacity: saving ? 0.6 : 1,
             }}
           >
             <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>{editingItem ? 'save' : 'add'}</span>
