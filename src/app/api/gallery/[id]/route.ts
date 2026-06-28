@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 
 type Params = Promise<{ id: string }>;
 
@@ -9,6 +10,9 @@ export async function DELETE(req: Request, segmentData: { params: Params }) {
     await prisma.galleryImage.delete({
       where: { id }
     });
+    
+    revalidatePath('/gallery');
+    
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to delete gallery image' }, { status: 500 });

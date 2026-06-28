@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 
 type Params = Promise<{ id: string }>;
 
@@ -25,6 +26,10 @@ export async function PUT(req: Request, segmentData: { params: Params }) {
       where: { id },
       data: updateData,
     });
+    
+    revalidatePath('/menu');
+    revalidatePath('/');
+    
     return NextResponse.json(item);
   } catch (error: any) {
     console.error('[PUT /api/menu/items/:id]', error?.message ?? error);
@@ -41,6 +46,10 @@ export async function DELETE(req: Request, segmentData: { params: Params }) {
     await prisma.menuItem.delete({
       where: { id }
     });
+    
+    revalidatePath('/menu');
+    revalidatePath('/');
+    
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to delete item' }, { status: 500 });

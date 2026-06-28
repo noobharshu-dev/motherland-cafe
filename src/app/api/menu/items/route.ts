@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -46,6 +47,11 @@ export async function POST(req: Request) {
         isVisible: data.isVisible !== false,
       }
     });
+    
+    // Invalidate public caches so the new item shows up immediately
+    revalidatePath('/menu');
+    revalidatePath('/');
+    
     return NextResponse.json(item);
   } catch (error: any) {
     console.error('[POST /api/menu/items]', error?.message ?? error);
