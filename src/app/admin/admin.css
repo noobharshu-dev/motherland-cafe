@@ -1,5 +1,9 @@
 /* Admin layout - fully isolated from marketing styles */
 
+/* Hide scrollbars globally inside admin modals */
+.admin-modal-body::-webkit-scrollbar { display: none; }
+.admin-modal-body { scrollbar-width: none; -ms-overflow-style: none; }
+
 .admin-sidebar {
   position: fixed;
   left: 0;

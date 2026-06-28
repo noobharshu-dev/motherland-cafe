@@ -451,27 +451,29 @@ function ItemModal({ onClose, onSaved, categories, editingItem }: { onClose: () 
         </div>
 
         {/* Body */}
-        <div style={{ padding: '24px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <div style={{ padding: '24px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '24px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           
           {/* Image Upload */}
           <div>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Item Image</label>
-            <div 
-              onClick={() => fileInputRef.current?.click()}
-              style={{ width: '100%', height: '160px', border: '2px dashed #4d4635', borderRadius: '8px', background: '#121212', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', overflow: 'hidden' }}
-            >
-              <input type="file" ref={fileInputRef} onChange={handleUpload} accept="image/*" style={{ display: 'none' }} />
-              {uploading ? (
-                <div style={{ color: '#d4af37' }}>Uploading...</div>
-              ) : formData.imageUrl ? (
-                <img src={formData.imageUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : (
-                <>
-                  <span className="material-symbols-outlined" style={{ fontSize: '36px', color: '#d0c5af', marginBottom: '8px' }}>add_photo_alternate</span>
-                  <p style={{ margin: 0, fontSize: '14px', color: '#d0c5af' }}>Click to upload image</p>
-                  <p style={{ margin: '4px 0 0', fontSize: '10px', color: 'rgba(208, 197, 175, 0.7)' }}>JPG, PNG, WEBP</p>
-                </>
-              )}
+            <div style={{ position: 'relative', width: '100%', paddingTop: '75%' /* 4:3 ratio */ }}>
+              <div 
+                onClick={() => fileInputRef.current?.click()}
+                style={{ position: 'absolute', inset: 0, border: '2px dashed #4d4635', borderRadius: '8px', background: '#121212', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', overflow: 'hidden' }}
+              >
+                <input type="file" ref={fileInputRef} onChange={handleUpload} accept="image/*" style={{ display: 'none' }} />
+                {uploading ? (
+                  <div style={{ color: '#d4af37' }}>Uploading...</div>
+                ) : formData.imageUrl ? (
+                  <img src={formData.imageUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined" style={{ fontSize: '36px', color: '#d0c5af', marginBottom: '8px' }}>add_photo_alternate</span>
+                    <p style={{ margin: 0, fontSize: '14px', color: '#d0c5af' }}>Click to upload image</p>
+                    <p style={{ margin: '4px 0 0', fontSize: '10px', color: 'rgba(208, 197, 175, 0.7)' }}>JPG, PNG, WEBP</p>
+                  </>
+                )}
+              </div>
             </div>
           </div>
 
