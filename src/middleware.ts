@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
   const isAuthenticated = request.cookies.has('admin_session');
 
   // Protect /api/admin (except login)
-  if (path.startsWith('/api/admin') && !path.startsWith('/api/admin/login')) {
+  if (path.startsWith('/api/admin') && !path.startsWith('/api/admin/login') && !path.startsWith('/api/admin/check')) {
     if (!isAuthenticated) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

@@ -14,10 +14,12 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     setIsMounted(true);
-    const savedPin = localStorage.getItem('adminPin');
-    if (savedPin === '1234') {
-      setIsUnlocked(true);
-    }
+    // Check if session cookie is valid via the API
+    fetch('/api/admin/check')
+      .then(res => {
+        if (res.ok) setIsUnlocked(true);
+      })
+      .catch(() => {});
   }, []);
 
   // Redirect to menu if at root /admin
@@ -27,8 +29,7 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
     }
   }, [pathname, isUnlocked, isMounted, router]);
 
-  const handleUnlock = (pin: string) => {
-    localStorage.setItem('adminPin', pin);
+  const handleUnlock = () => {
     setIsUnlocked(true);
     if (pathname === '/admin') {
       router.replace('/admin/menu');

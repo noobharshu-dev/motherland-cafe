@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 
-export function PinScreen({ onUnlock }: { onUnlock: (pin: string) => void }) {
+export function PinScreen({ onUnlock }: { onUnlock: () => void }) {
   const [pin, setPin] = useState('');
   const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -19,7 +19,7 @@ export function PinScreen({ onUnlock }: { onUnlock: (pin: string) => void }) {
       });
       
       if (res.ok) {
-        onUnlock(pin);
+        onUnlock();
       } else {
         setError(true);
         setPin('');
