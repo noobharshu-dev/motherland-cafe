@@ -29,7 +29,7 @@ model Review {
   rating      Int
   reviewText  String
   source      String   @default("Google")
-  isPublished Boolean  @default(true)
+  status      String   @default("pending")
   createdAt   DateTime @default(now())
 }
 
@@ -61,4 +61,5 @@ model MenuItem {
   isVegan      Boolean      @default(false)
   isGlutenFree Boolean      @default(false)
   isFeatured   Boolean      @default(false)
+  isVisible    Boolean      @default(true)
 }

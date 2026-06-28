@@ -1,0 +1,227 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Add Menu Item - Motherland</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed-variant": "#574500",
+                        "secondary-container": "#454747",
+                        "error": "#ffb4ab",
+                        "tertiary-container": "#c9b16a",
+                        "inverse-primary": "#735c00",
+                        "primary-fixed-dim": "#e9c349",
+                        "surface-container-highest": "#353534",
+                        "on-tertiary-fixed-variant": "#564506",
+                        "on-secondary": "#2f3131",
+                        "primary-container": "#d4af37",
+                        "on-primary": "#3c2f00",
+                        "outline-variant": "#4d4635",
+                        "secondary": "#c6c6c7",
+                        "primary-fixed": "#ffe088",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-container": "#b4b5b5",
+                        "surface-container": "#201f1f",
+                        "on-primary-container": "#554300",
+                        "surface": "#131313",
+                        "surface-container-high": "#2a2a2a",
+                        "primary": "#f2ca50",
+                        "on-surface": "#e5e2e1",
+                        "on-primary-fixed": "#241a00",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "on-tertiary-container": "#544304",
+                        "error-container": "#93000a",
+                        "on-tertiary": "#3c2f00",
+                        "on-tertiary-fixed": "#231b00",
+                        "on-background": "#e5e2e1",
+                        "surface-variant": "#353534",
+                        "surface-bright": "#393939",
+                        "tertiary-fixed-dim": "#ddc57b",
+                        "background": "#131313",
+                        "inverse-surface": "#e5e2e1",
+                        "tertiary": "#e6cd82",
+                        "inverse-on-surface": "#313030",
+                        "on-error": "#690005",
+                        "on-secondary-fixed-variant": "#454747",
+                        "surface-dim": "#131313",
+                        "surface-tint": "#e9c349",
+                        "surface-container-low": "#1c1b1b",
+                        "on-surface-variant": "#d0c5af",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "outline": "#99907c",
+                        "secondary-fixed": "#e2e2e2",
+                        "tertiary-fixed": "#fbe194"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sidebar-width": "280px",
+                        "margin": "32px",
+                        "sm": "16px",
+                        "base": "4px",
+                        "md": "24px",
+                        "xs": "8px",
+                        "xl": "64px",
+                        "gutter": "24px",
+                        "lg": "40px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "headline-sm": ["Playfair Display"],
+                        "headline-md": ["Playfair Display"],
+                        "label-md": ["Inter"],
+                        "display-lg": ["Playfair Display"],
+                        "headline-lg": ["Playfair Display"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Custom scrollbar for multi-select and textareas */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #131313;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #353534;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d4af37;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen overflow-hidden flex antialiased">
+<!-- Blurred Background Context (Menu Management) -->
+<div class="fixed inset-0 w-full h-full opacity-30 blur-sm pointer-events-none z-0" data-alt="A sophisticated, dark-themed dashboard interface showing a high-end cafe menu management system. The screen features rows of beautifully plated artisanal coffee and pastry dishes in a list format, accented with subtle brass-colored typography on charcoal grey cards." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCCm2jvKjk8kRPiX4aNs4tDItat4SyHGCnxTysnlvdM0B0q33C4DRhIrmkLO0znGuQpX0Pl-Skg4-d8w6RQcBCcKcPNEf_uOoyGf7zKsZeSg17ywhPpmYLiRBQR-vkceOKy-1ThefnGgT58imM6knGxJftO1p3npWLwSihtQHZWGsD0W-0U3g4vj6flWv3U3n83_gyAw6KltydAX915XbFBpKPpsQ1XTC1A4G8_A_GNo-fOqrW0UCvJ5vwOd8UU6PSxG3M-V2-nFw'); background-size: cover; background-position: center;"></div>
+<div class="fixed inset-0 bg-background/80 z-0"></div>
+<!-- Centered Modal Wrapper -->
+<div class="relative z-10 w-full h-full flex items-center justify-center p-sm md:p-margin overflow-y-auto">
+<!-- Modal Container -->
+<div class="w-full max-w-2xl bg-[#1E1E1E] rounded-lg border border-[#2C2C2C] shadow-[0px_8px_24px_rgba(0,0,0,0.5)] flex flex-col max-h-[921px]">
+<!-- Modal Header -->
+<div class="flex justify-between items-center p-md border-b border-[#2C2C2C] shrink-0">
+<h2 class="font-headline-md text-headline-md text-on-surface">Add Menu Item</h2>
+<button class="text-on-surface-variant hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-2xl">close</span>
+</button>
+</div>
+<!-- Modal Body (Scrollable) -->
+<div class="p-md overflow-y-auto flex-1 space-y-md">
+<!-- Image Upload Section -->
+<div class="w-full">
+<label class="block font-label-md text-label-md text-on-surface-variant mb-xs">Item Image</label>
+<div class="w-full h-40 border-2 border-dashed border-[#4d4635] rounded-lg bg-[#121212] flex flex-col items-center justify-center cursor-pointer hover:border-primary hover:bg-[#1c1b1b] transition-all group">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-primary mb-2">add_photo_alternate</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant group-hover:text-primary">Click to upload or drag &amp; drop</p>
+<p class="font-label-md text-[10px] text-on-surface-variant/70 mt-1">PNG, JPG, WEBP (Max 2MB)</p>
+</div>
+</div>
+<!-- Name and Price Row -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md">
+<div class="md:col-span-2 space-y-xs">
+<label class="block font-label-md text-label-md text-on-surface-variant" for="item_name">Item Name</label>
+<input class="w-full bg-[#121212] border border-[#2C2C2C] rounded-DEFAULT p-sm font-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-on-surface-variant/50" id="item_name" placeholder="e.g., Artisan Pour Over" type="text">
+</div>
+<div class="space-y-xs">
+<label class="block font-label-md text-label-md text-on-surface-variant" for="item_price">Price ($)</label>
+<div class="relative">
+<span class="absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant font-body-md">$</span>
+<input class="w-full bg-[#121212] border border-[#2C2C2C] rounded-DEFAULT p-sm pl-[32px] font-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-on-surface-variant/50" id="item_price" placeholder="0.00" step="0.01" type="number">
+</div>
+</div>
+</div>
+<!-- Category and Tags Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div class="space-y-xs">
+<label class="block font-label-md text-label-md text-on-surface-variant" for="item_category">Category</label>
+<select class="w-full bg-[#121212] border border-[#2C2C2C] rounded-DEFAULT p-sm font-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all appearance-none cursor-pointer" id="item_category">
+<option disabled="" selected="" value="">Select Category</option>
+<option value="coffee">Coffee &amp; Espresso</option>
+<option value="tea">Tea &amp; Infusions</option>
+<option value="pastry">Pastries &amp; Baked Goods</option>
+<option value="brunch">Brunch Plates</option>
+<option value="seasonal">Seasonal Specials</option>
+</select>
+</div>
+<div class="space-y-xs">
+<label class="block font-label-md text-label-md text-on-surface-variant">Dietary Tags</label>
+<div class="flex flex-wrap gap-xs">
+<label class="cursor-pointer group flex items-center bg-[#121212] border border-[#2C2C2C] rounded-full px-3 py-1.5 hover:border-primary transition-all">
+<input class="hidden peer" type="checkbox" value="vegan">
+<span class="font-body-sm text-body-sm text-on-surface-variant peer-checked:text-primary">Vegan</span>
+</label>
+<label class="cursor-pointer group flex items-center bg-[#121212] border border-[#2C2C2C] rounded-full px-3 py-1.5 hover:border-primary transition-all">
+<input class="hidden peer" type="checkbox" value="vegetarian">
+<span class="font-body-sm text-body-sm text-on-surface-variant peer-checked:text-primary">Vegetarian</span>
+</label>
+<label class="cursor-pointer group flex items-center bg-[#121212] border border-[#2C2C2C] rounded-full px-3 py-1.5 hover:border-primary transition-all">
+<input class="hidden peer" type="checkbox" value="gluten-free">
+<span class="font-body-sm text-body-sm text-on-surface-variant peer-checked:text-primary">Gluten-Free</span>
+</label>
+</div>
+</div>
+</div>
+<!-- Description -->
+<div class="space-y-xs">
+<label class="block font-label-md text-label-md text-on-surface-variant" for="item_desc">Description</label>
+<textarea class="w-full bg-[#121212] border border-[#2C2C2C] rounded-DEFAULT p-sm font-body-md text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-none placeholder:text-on-surface-variant/50" id="item_desc" placeholder="Describe the flavor profile, ingredients, and origin..." rows="3"></textarea>
+</div>
+<!-- Featured Toggle -->
+<div class="flex items-center justify-between p-sm bg-[#121212] border border-[#2C2C2C] rounded-lg">
+<div>
+<span class="block font-body-md text-on-surface">Feature on Homepage</span>
+<span class="block font-body-sm text-on-surface-variant text-sm">Highlight this item in the "Seasonal Signatures" section.</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value="">
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+<!-- Modal Footer (Actions) -->
+<div class="flex justify-end items-center gap-md p-md border-t border-[#2C2C2C] shrink-0 bg-[#1A1A1A] rounded-b-lg">
+<button class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors uppercase" type="button">
+                    Cancel
+                </button>
+<button class="bg-primary-container text-[#000000] font-label-md text-label-md px-xl py-xs rounded-DEFAULT hover:bg-primary transition-colors flex items-center gap-xs uppercase" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                    Add Item
+                </button>
+</div>
+</div>
+</div>
+</body></html>
