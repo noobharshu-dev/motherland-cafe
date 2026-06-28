@@ -40,7 +40,7 @@ export default async function HomePage() {
 
   try {
     const dbReviews = await prisma.review.findMany({
-      where: { isPublished: true },
+      where: { status: "published" },
       orderBy: { createdAt: "desc" },
       take: 6,
     });
