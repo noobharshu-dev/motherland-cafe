@@ -204,7 +204,7 @@ export default function MenuManagement() {
                   </div>
 
                   {/* Price */}
-                  <div style={{ ...S.bodyLg, color: C.onSurface, fontWeight: 600 }}>${item.price?.toFixed(2)}</div>
+                  <div style={{ ...S.bodyLg, color: C.onSurface, fontWeight: 600 }}>₹{item.price?.toFixed(2)}</div>
 
                   {/* Actions */}
                   <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
@@ -237,7 +237,7 @@ export default function MenuManagement() {
                       <div style={{ fontWeight: 600, color: C.onSurface, marginBottom: '4px', fontSize: '15px' }}>{item.name}</div>
                       <div style={{ color: C.onSurfaceVariant, fontSize: '12px', marginBottom: '8px' }}>{item.description}</div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ color: C.onSurface, fontWeight: 600 }}>${item.price?.toFixed(2)}</span>
+                        <span style={{ color: C.onSurface, fontWeight: 600 }}>₹{item.price?.toFixed(2)}</span>
                         <div style={{ display: 'flex', gap: '8px' }}>
                           <button onClick={() => openEditModal(item)} style={{ background: 'none', border: 'none', color: C.onSurfaceVariant, cursor: 'pointer', padding: '4px', lineHeight: 0 }}>
                             <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>edit</span>
@@ -486,9 +486,9 @@ function ItemModal({ onClose, onSaved, categories, editingItem }: { onClose: () 
               />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Price ($)</label>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Price (₹)</label>
               <div style={{ position: 'relative' }}>
-                <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#d0c5af' }}>$</span>
+                <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#d0c5af' }}>₹</span>
                 <input 
                   required type="number" step="0.01" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})}
                   placeholder="0.00"
