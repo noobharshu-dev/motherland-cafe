@@ -61,7 +61,7 @@ export default function AdminDashboard({
   ];
 
   return (
-    <div className="min-h-screen" style={{ background: "#14100D", fontFamily: "var(--font-body, 'Outfit', system-ui, sans-serif)" }}>
+    <div className="w-full min-h-screen" style={{ background: "#14100D", fontFamily: "var(--font-body, 'Outfit', system-ui, sans-serif)" }}>
 
       {/* ── Top Bar ─────────────────────────────────────────────── */}
       <div style={{ background: "#1A1512", borderBottom: "1px solid rgba(212,175,55,0.1)" }}
@@ -104,7 +104,7 @@ export default function AdminDashboard({
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
 
         {/* ── Saving Overlay ───────────────────────────────────── */}
         <AnimatePresence>
