@@ -351,12 +351,19 @@ function ItemModal({ onClose, onSaved, categories, editingItem }: { onClose: () 
     setUploading(true);
     try {
       const sigRes = await fetch('/api/upload/signature', { method: 'POST' });
+      if (!sigRes.ok) {
+        throw new Error(`Signature request failed: ${sigRes.status}`);
+      }
       const { signature, timestamp, folder, cloudName, apiKey } = await sigRes.json();
-      
+
+      if (!cloudName || !apiKey || !signature) {
+        throw new Error('Missing Cloudinary credentials from signature endpoint');
+      }
+
       const formDataUpload = new FormData();
       formDataUpload.append('file', file);
       formDataUpload.append('api_key', apiKey);
-      formDataUpload.append('timestamp', timestamp);
+      formDataUpload.append('timestamp', String(timestamp));
       formDataUpload.append('signature', signature);
       formDataUpload.append('folder', folder);
 
@@ -365,12 +372,17 @@ function ItemModal({ onClose, onSaved, categories, editingItem }: { onClose: () 
         body: formDataUpload,
       });
       const uploadData = await uploadRes.json();
+
       if (uploadData.secure_url) {
-        setFormData({ ...formData, imageUrl: uploadData.secure_url });
+        // Use functional updater to avoid stale closure overwriting other fields
+        setFormData(prev => ({ ...prev, imageUrl: uploadData.secure_url }));
+      } else {
+        const errMsg = uploadData.error?.message || JSON.stringify(uploadData);
+        throw new Error(`Cloudinary rejected upload: ${errMsg}`);
       }
-    } catch (err) {
-      console.error(err);
-      alert('Upload failed');
+    } catch (err: any) {
+      console.error('[handleUpload]', err);
+      alert(`Image upload failed: ${err?.message || err}`);
     }
     setUploading(false);
   };
