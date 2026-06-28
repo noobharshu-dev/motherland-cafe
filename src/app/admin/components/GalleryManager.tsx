@@ -14,6 +14,18 @@ interface GalleryManagerProps {
   onDelete: (id: string) => void;
 }
 
+const inputStyle: React.CSSProperties = {
+  width: "100%",
+  padding: "0.75rem 1rem",
+  background: "rgba(0,0,0,0.25)",
+  color: "#FBF9F6",
+  border: "1px solid rgba(255,255,255,0.1)",
+  borderRadius: "0.75rem",
+  fontSize: "0.875rem",
+  outline: "none",
+  transition: "border-color 0.2s",
+};
+
 export default function GalleryManager({ images, onCreate, onDelete }: GalleryManagerProps) {
   const [showModal, setShowModal] = useState(false);
   const [galF, setGalF] = useState(BLANK_GAL);
@@ -25,115 +37,165 @@ export default function GalleryManager({ images, onCreate, onDelete }: GalleryMa
   };
 
   return (
-    <div className="w-full">
-      <div className="flex justify-end mb-8">
+    <div className="w-full space-y-6">
+
+      {/* ── Action Bar ───────────────────────────────────────── */}
+      <div className="flex justify-between items-center">
+        <p className="text-sm font-medium" style={{ color: "#A89F91" }}>
+          {images.length} photo{images.length !== 1 ? "s" : ""} in gallery
+        </p>
         <button
-          className="flex items-center gap-2 px-5 py-2.5 bg-[var(--color-cta)] text-[#1A1311] rounded-full text-sm font-bold whitespace-nowrap hover:bg-[#B8972E] transition-all shadow-[0_0_15px_rgba(212,175,55,0.2)]"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all"
+          style={{ background: "#D4AF37", color: "#1A1311" }}
           onClick={() => setShowModal(true)}
         >
           <Plus size={16} /> Add Photo
         </button>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {images.map(img => (
-          <div key={img.id} className="bg-[rgba(255,255,255,0.02)] backdrop-blur-md rounded-2xl border border-[rgba(255,255,255,0.05)] overflow-hidden group hover:border-[rgba(255,255,255,0.1)] transition-colors">
-            <div className="relative aspect-square bg-[rgba(0,0,0,0.2)]">
-              <Image src={img.imageUrl} alt={img.title} fill className="object-cover" sizes="300px" />
-              
-              {!img.isPublished && (
-                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
-                  <span className="text-[var(--color-primary)] text-xs font-bold tracking-widest px-3 py-1 bg-black/50 rounded-full border border-white/10">HIDDEN</span>
+      {/* ── Photo Grid ───────────────────────────────────────── */}
+      {images.length > 0 ? (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {images.map(img => (
+            <div
+              key={img.id}
+              className="rounded-2xl overflow-hidden group transition-all"
+              style={{ background: "#211A15", border: "1px solid rgba(255,255,255,0.05)" }}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)")}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)")}
+            >
+              <div className="relative aspect-square" style={{ background: "rgba(0,0,0,0.2)" }}>
+                <Image src={img.imageUrl} alt={img.title} fill className="object-cover" sizes="300px" />
+
+                {!img.isPublished && (
+                  <div className="absolute inset-0 flex items-center justify-center" style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)" }}>
+                    <span className="text-xs font-bold tracking-widest px-3 py-1 rounded-full" style={{ color: "#FBF9F6", background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.1)" }}>
+                      HIDDEN
+                    </span>
+                  </div>
+                )}
+
+                {/* Hover overlay */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end"
+                  style={{ background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 50%, transparent 100%)" }}>
+                  <button
+                    className="absolute top-2 right-2 p-2 rounded-full text-white transition-colors shadow-lg"
+                    style={{ background: "rgba(220,38,38,0.8)" }}
+                    onMouseEnter={e => (e.currentTarget.style.background = "rgba(220,38,38,1)")}
+                    onMouseLeave={e => (e.currentTarget.style.background = "rgba(220,38,38,0.8)")}
+                    onClick={() => { if (confirm(`Delete "${img.title}"?`)) onDelete(img.id); }}
+                    title="Delete Image"
+                  >
+                    <Trash2 size={13} />
+                  </button>
+                  <div className="p-3">
+                    <p className="text-sm font-semibold truncate" style={{ color: "#FBF9F6" }}>{img.title || "Untitled"}</p>
+                    <p className="text-xs capitalize" style={{ color: "#A89F91" }}>{img.category}</p>
+                  </div>
                 </div>
-              )}
-              
-              {/* Overlay Actions */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
-                <button
-                  className="absolute top-3 right-3 p-2 bg-red-500/80 backdrop-blur-md rounded-full text-white hover:bg-red-500 transition-colors shadow-lg transform translate-y-2 group-hover:translate-y-0 duration-200"
-                  onClick={() => { if(confirm(`Delete "${img.title}"?`)) onDelete(img.id); }}
-                  title="Delete Image"
-                >
-                  <Trash2 size={14} />
-                </button>
-                <p className="font-medium text-sm text-[var(--color-primary)] truncate transform translate-y-2 group-hover:translate-y-0 duration-200 delay-75">{img.title || "Untitled"}</p>
-                <p className="text-xs text-[var(--color-secondary)] capitalize transform translate-y-2 group-hover:translate-y-0 duration-200 delay-100">{img.category}</p>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {!images.length && (
-        <div className="text-center py-20 text-[var(--color-muted)] bg-[rgba(255,255,255,0.01)] rounded-2xl border border-[rgba(255,255,255,0.05)] border-dashed mt-4">
-          No gallery images found. Click "Add Photo" to upload.
+          ))}
+        </div>
+      ) : (
+        <div
+          className="text-center py-20 rounded-2xl"
+          style={{ color: "#A89F91", background: "rgba(255,255,255,0.01)", border: "1px dashed rgba(255,255,255,0.07)" }}
+        >
+          No gallery images found. Click &ldquo;Add Photo&rdquo; to upload.
         </div>
       )}
 
-      {/* Upload Modal */}
+      {/* ── Upload Modal ──────────────────────────────────────── */}
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Add Gallery Photo">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="md:col-span-2">
-            <label className="block text-xs font-bold text-[var(--color-muted)] uppercase tracking-wider mb-2">Image URL *</label>
+            <label className="block text-xs font-bold uppercase tracking-wider mb-2" style={{ color: "#A89F91" }}>Image URL *</label>
             <input
-              className="w-full p-3 bg-[rgba(0,0,0,0.2)] text-[var(--color-primary)] border border-[rgba(255,255,255,0.1)] rounded-xl text-sm focus:ring-1 focus:ring-[var(--color-cta)] outline-none transition-shadow"
+              style={inputStyle}
               value={galF.imageUrl}
               onChange={e => setGalF(f => ({ ...f, imageUrl: e.target.value }))}
               placeholder="https://images.unsplash.com/..."
+              onFocus={e => (e.target.style.borderColor = "#D4AF37")}
+              onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.1)")}
             />
           </div>
           <div>
-            <label className="block text-xs font-bold text-[var(--color-muted)] uppercase tracking-wider mb-2">Title</label>
+            <label className="block text-xs font-bold uppercase tracking-wider mb-2" style={{ color: "#A89F91" }}>Title</label>
             <input
-              className="w-full p-3 bg-[rgba(0,0,0,0.2)] text-[var(--color-primary)] border border-[rgba(255,255,255,0.1)] rounded-xl text-sm focus:ring-1 focus:ring-[var(--color-cta)] outline-none transition-shadow"
+              style={inputStyle}
               value={galF.title}
               onChange={e => setGalF(f => ({ ...f, title: e.target.value }))}
               placeholder="Cozy seating"
+              onFocus={e => (e.target.style.borderColor = "#D4AF37")}
+              onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.1)")}
             />
           </div>
           <div>
-            <label className="block text-xs font-bold text-[var(--color-muted)] uppercase tracking-wider mb-2">Category</label>
+            <label className="block text-xs font-bold uppercase tracking-wider mb-2" style={{ color: "#A89F91" }}>Category</label>
             <select
-              className="w-full p-3 bg-[rgba(0,0,0,0.2)] text-[var(--color-primary)] border border-[rgba(255,255,255,0.1)] rounded-xl text-sm focus:ring-1 focus:ring-[var(--color-cta)] outline-none transition-shadow"
+              style={{ ...inputStyle, appearance: "none" as const }}
               value={galF.category}
               onChange={e => setGalF(f => ({ ...f, category: e.target.value }))}
+              onFocus={e => (e.target.style.borderColor = "#D4AF37")}
+              onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.1)")}
             >
-              <option value="ambience">Ambience</option>
-              <option value="food">Food</option>
-              <option value="drinks">Drinks</option>
+              <option value="ambience" style={{ background: "#211A15" }}>Ambience</option>
+              <option value="food" style={{ background: "#211A15" }}>Food</option>
+              <option value="drinks" style={{ background: "#211A15" }}>Drinks</option>
             </select>
           </div>
           <div>
-            <label className="block text-xs font-bold text-[var(--color-muted)] uppercase tracking-wider mb-2">Display Order</label>
+            <label className="block text-xs font-bold uppercase tracking-wider mb-2" style={{ color: "#A89F91" }}>Display Order</label>
             <input
               type="number"
-              className="w-full p-3 bg-[rgba(0,0,0,0.2)] text-[var(--color-primary)] border border-[rgba(255,255,255,0.1)] rounded-xl text-sm focus:ring-1 focus:ring-[var(--color-cta)] outline-none transition-shadow"
+              style={inputStyle}
               value={galF.displayOrder}
               onChange={e => setGalF(f => ({ ...f, displayOrder: Number(e.target.value) }))}
+              onFocus={e => (e.target.style.borderColor = "#D4AF37")}
+              onBlur={e => (e.target.style.borderColor = "rgba(255,255,255,0.1)")}
             />
           </div>
-          <div className="flex items-center pt-8">
-            <label className="flex items-center gap-3 px-4 py-2 bg-[rgba(0,0,0,0.2)] border border-[rgba(255,255,255,0.05)] rounded-full cursor-pointer hover:bg-[rgba(255,255,255,0.05)] transition-colors">
+          <div className="flex items-center pt-2">
+            <label
+              className="flex items-center gap-3 px-4 py-2.5 rounded-full cursor-pointer transition-colors text-sm font-medium select-none"
+              style={{
+                background: galF.isPublished ? "rgba(212,175,55,0.1)" : "rgba(0,0,0,0.2)",
+                border: `1px solid ${galF.isPublished ? "rgba(212,175,55,0.3)" : "rgba(255,255,255,0.07)"}`,
+                color: galF.isPublished ? "#D4AF37" : "#A89F91",
+              }}
+            >
               <input
                 type="checkbox"
-                className="w-4 h-4 text-[var(--color-cta)] rounded bg-transparent border-[rgba(255,255,255,0.2)] focus:ring-[var(--color-cta)] focus:ring-offset-0 accent-[var(--color-cta)]"
+                className="hidden"
                 checked={galF.isPublished}
                 onChange={e => setGalF(f => ({ ...f, isPublished: e.target.checked }))}
               />
-              <span className="text-sm font-medium text-[var(--color-secondary)]">Published Live</span>
+              <div
+                className="w-10 h-5 rounded-full relative transition-colors"
+                style={{ background: galF.isPublished ? "#D4AF37" : "rgba(255,255,255,0.15)" }}
+              >
+                <div
+                  className="absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform"
+                  style={{ transform: galF.isPublished ? "translateX(1.35rem)" : "translateX(0.125rem)" }}
+                />
+              </div>
+              Published Live
             </label>
           </div>
         </div>
-        
-        <div className="flex justify-end gap-3 mt-8 pt-6 border-t border-[rgba(255,255,255,0.05)]">
+
+        <div className="flex justify-end gap-3 mt-8 pt-6" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
           <button
-            className="px-6 py-2.5 bg-transparent text-[var(--color-primary)] border border-[rgba(255,255,255,0.1)] rounded-xl text-sm font-bold hover:bg-[rgba(255,255,255,0.05)] transition-colors"
+            className="px-6 py-2.5 rounded-xl text-sm font-bold transition-colors"
+            style={{ border: "1px solid rgba(255,255,255,0.1)", color: "#FBF9F6", background: "transparent" }}
             onClick={() => setShowModal(false)}
           >
             Cancel
           </button>
           <button
-            className="px-6 py-2.5 bg-[var(--color-cta)] text-[#1A1311] rounded-xl text-sm font-bold hover:bg-[#B8972E] transition-colors"
+            className="px-6 py-2.5 rounded-xl text-sm font-bold transition-colors"
+            style={{ background: "#D4AF37", color: "#1A1311" }}
             onClick={handleSave}
           >
             Upload Photo

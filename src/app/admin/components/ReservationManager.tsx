@@ -7,83 +7,104 @@ interface ReservationManagerProps {
   onUpdateStatus: (id: string, status: string) => void;
 }
 
+const STATUS_STYLES: Record<string, { bg: string; text: string; border: string; optBg: string }> = {
+  confirmed: { bg: "rgba(34,197,94,0.1)", text: "#4ade80", border: "rgba(34,197,94,0.2)", optBg: "#0f1f14" },
+  cancelled:  { bg: "rgba(220,38,38,0.1)",  text: "#f87171", border: "rgba(220,38,38,0.2)",  optBg: "#1f0e0e" },
+  pending:    { bg: "rgba(212,175,55,0.1)", text: "#D4AF37", border: "rgba(212,175,55,0.2)", optBg: "#1a1511" },
+};
+
+const StatusBadge = ({ status }: { status: string }) => {
+  const s = STATUS_STYLES[status] ?? STATUS_STYLES.pending;
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
+      style={{ background: s.bg, color: s.text, border: `1px solid ${s.border}` }}
+    >
+      <span className="w-1.5 h-1.5 rounded-full" style={{ background: s.text }} />
+      {status}
+    </span>
+  );
+};
+
 export default function ReservationManager({ reservations, onUpdateStatus }: ReservationManagerProps) {
   return (
-    <div className="w-full">
-      <div className="bg-[rgba(255,255,255,0.02)] backdrop-blur-md rounded-2xl border border-[rgba(255,255,255,0.05)] overflow-hidden shadow-2xl">
-        <div className="overflow-x-auto custom-scrollbar">
-          <table className="w-full text-sm text-left">
-            <thead className="text-xs text-[var(--color-muted)] uppercase tracking-wider bg-[rgba(0,0,0,0.2)] border-b border-[rgba(255,255,255,0.05)]">
-              <tr>
-                <th className="px-6 py-5 font-bold">Guest Details</th>
-                <th className="px-6 py-5 font-bold">Date & Time</th>
-                <th className="px-6 py-5 font-bold text-center">Party</th>
-                <th className="px-6 py-5 font-bold">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[rgba(255,255,255,0.02)]">
-              {reservations.map((r) => (
-                <tr key={r.id} className="hover:bg-[rgba(255,255,255,0.01)] transition-colors group">
-                  <td className="px-6 py-5">
-                    <div className="font-bold text-[var(--color-primary)] text-base mb-1">{r.name}</div>
-                    <div className="flex flex-col gap-0.5 text-xs">
-                      <span className="text-[var(--color-secondary)]">{r.phone}</span>
-                      <span className="text-[var(--color-muted)]">{r.email}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-5 whitespace-nowrap">
-                    <div className="font-semibold text-[var(--color-primary)] mb-1">{r.reservationDate}</div>
-                    <div className="text-[var(--color-secondary)] flex items-center gap-1.5 text-xs">
-                      <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--color-cta)] shadow-[0_0_5px_rgba(212,175,55,0.5)]"></span>
-                      {r.reservationTime}
-                    </div>
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.05)] font-bold text-[var(--color-primary)]">
-                      {r.guests}
-                    </span>
-                    <div className="text-[var(--color-muted)] text-[10px] mt-1 uppercase tracking-wider">Pax</div>
-                  </td>
-                  <td className="px-6 py-5">
-                    <div className="relative inline-block w-full max-w-[150px]">
-                      <select
-                        value={r.status}
-                        onChange={e => onUpdateStatus(r.id, e.target.value)}
-                        className={`w-full text-xs font-bold px-4 py-2.5 rounded-xl border outline-none cursor-pointer appearance-none transition-colors ${
-                          r.status === 'confirmed' ? 'bg-green-500/10 text-green-400 border-green-500/20 hover:bg-green-500/20' : 
-                          r.status === 'cancelled' ? 'bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20' : 
-                          'bg-yellow-500/10 text-yellow-400 border-yellow-500/20 hover:bg-yellow-500/20'
-                        }`}
-                        style={{
-                          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`,
-                          backgroundPosition: 'right 0.75rem center',
-                          backgroundRepeat: 'no-repeat',
-                          backgroundSize: '1em 1em'
-                        }}
-                      >
-                        <option value="pending" className="bg-[#1A1311] text-yellow-400">Pending</option>
-                        <option value="confirmed" className="bg-[#1A1311] text-green-400">Confirmed</option>
-                        <option value="cancelled" className="bg-[#1A1311] text-red-400">Cancelled</option>
-                      </select>
-                    </div>
-                    {r.notes && (
-                      <div className="mt-3 text-xs text-[var(--color-muted)] bg-[rgba(0,0,0,0.2)] p-3 rounded-lg border border-[rgba(255,255,255,0.02)] max-w-xs">
-                        <span className="font-bold text-[var(--color-secondary)] uppercase tracking-wider text-[10px] block mb-1">Note</span>
-                        <p className="line-clamp-2 leading-relaxed" title={r.notes}>{r.notes}</p>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+    <div className="w-full space-y-4">
+      {!reservations.length ? (
+        <div
+          className="text-center py-20 rounded-2xl"
+          style={{ color: "#A89F91", background: "rgba(255,255,255,0.01)", border: "1px dashed rgba(255,255,255,0.07)" }}
+        >
+          No reservations found.
         </div>
-        {!reservations.length && (
-          <div className="text-center py-20 text-[var(--color-muted)] bg-[rgba(255,255,255,0.01)] border-t border-[rgba(255,255,255,0.05)] border-dashed">
-            No reservations found.
+      ) : (
+        reservations.map(r => (
+          <div
+            key={r.id}
+            className="rounded-2xl p-5 shadow-lg transition-all"
+            style={{ background: "#211A15", border: "1px solid rgba(255,255,255,0.05)" }}
+          >
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+              {/* Guest Info */}
+              <div className="min-w-0 space-y-1.5">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="font-bold text-base" style={{ color: "#FBF9F6" }}>{r.name}</p>
+                  <StatusBadge status={r.status} />
+                </div>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-sm" style={{ color: "#A89F91" }}>
+                  <span>{r.email}</span>
+                  <span className="hidden sm:inline" style={{ color: "rgba(255,255,255,0.1)" }}>·</span>
+                  <span>{r.phone}</span>
+                </div>
+                <div className="flex items-center gap-4 text-sm flex-wrap" style={{ color: "#A89F91" }}>
+                  <span>
+                    <span className="font-semibold" style={{ color: "#FBF9F6" }}>{r.reservationDate}</span>
+                    {" "}at{" "}
+                    <span className="font-semibold" style={{ color: "#D4AF37" }}>{r.reservationTime}</span>
+                  </span>
+                  <span>
+                    <span className="font-semibold" style={{ color: "#FBF9F6" }}>{r.guests}</span>{" "}
+                    {r.guests === 1 ? "guest" : "guests"}
+                  </span>
+                </div>
+                {r.notes && (
+                  <div
+                    className="text-xs leading-relaxed max-w-md p-3 rounded-lg mt-1"
+                    style={{ background: "rgba(0,0,0,0.2)", border: "1px solid rgba(255,255,255,0.04)", color: "#A89F91" }}
+                  >
+                    <span className="block text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: "#6b7280" }}>Note</span>
+                    {r.notes}
+                  </div>
+                )}
+              </div>
+
+              {/* Status Control */}
+              <div className="flex gap-2 shrink-0 flex-wrap sm:flex-col">
+                {(["pending", "confirmed", "cancelled"] as const).map(s => {
+                  const active = r.status === s;
+                  const sStyle = STATUS_STYLES[s] ?? STATUS_STYLES.pending;
+                  return (
+                    <button
+                      key={s}
+                      onClick={() => onUpdateStatus(r.id, s)}
+                      disabled={active}
+                      className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all disabled:cursor-default"
+                      style={
+                        active
+                          ? { background: sStyle.bg, color: sStyle.text, border: `1px solid ${sStyle.border}` }
+                          : { background: "transparent", color: "#A89F91", border: "1px solid rgba(255,255,255,0.1)" }
+                      }
+                      onMouseEnter={e => { if (!active) { e.currentTarget.style.borderColor = sStyle.border; e.currentTarget.style.color = sStyle.text; } }}
+                      onMouseLeave={e => { if (!active) { e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; e.currentTarget.style.color = "#A89F91"; } }}
+                    >
+                      {s.charAt(0).toUpperCase() + s.slice(1)}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
-        )}
-      </div>
+        ))
+      )}
     </div>
   );
 }

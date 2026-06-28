@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogOut, Image as ImageIcon, Coffee, Star, Calendar, LayoutDashboard, RefreshCw } from "lucide-react";
+import { LogOut, Image as ImageIcon, Coffee, Star, Calendar, RefreshCw, UtensilsCrossed } from "lucide-react";
 import {
   logoutAdmin, createCategory, createMenuItem, updateMenuItem, deleteMenuItem,
   createGalleryImage, deleteGalleryImage,
@@ -47,77 +47,125 @@ export default function AdminDashboard({
   });
 
   const TABS: { id: Tab; label: string; icon: any; count?: number }[] = [
-    { id: "menu", label: "Menu", icon: Coffee },
+    { id: "menu", label: "Menu", icon: UtensilsCrossed },
     { id: "gallery", label: "Gallery", icon: ImageIcon },
     { id: "reviews", label: "Reviews", icon: Star },
     { id: "reservations", label: "Reservations", icon: Calendar, count: reservations.filter(r => r.status === "pending").length },
   ];
 
+  const stats = [
+    { label: "Menu Items", value: categories.reduce((sum, c) => sum + c.items.length, 0), color: "text-orange-400" },
+    { label: "Gallery Images", value: galleryImages.length, color: "text-blue-400" },
+    { label: "Total Reviews", value: reviews.length, color: "text-green-400" },
+    { label: "Pending Reserves", value: reservations.filter(r => r.status === "pending").length, color: "text-[#D4AF37]" },
+  ];
+
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] font-[family-name:var(--font-body)]">
-      {/* Top bar */}
-      <div className="bg-[#1A1512] px-6 py-4 flex items-center justify-between shadow-2xl">
+    <div className="min-h-screen" style={{ background: "#14100D", fontFamily: "var(--font-body, 'Outfit', system-ui, sans-serif)" }}>
+
+      {/* ── Top Bar ─────────────────────────────────────────────── */}
+      <div style={{ background: "#1A1512", borderBottom: "1px solid rgba(212,175,55,0.1)" }}
+        className="px-6 py-4 flex items-center justify-between sticky top-0 z-40 shadow-lg">
         <div className="flex items-center gap-3">
-          <Coffee size={20} className="text-[var(--color-cta)]" />
-          <span className="text-[var(--color-primary)] font-medium text-xl font-[family-name:var(--font-heading)] hidden sm:inline-block">Motherland Admin</span>
-          <span className="text-[var(--color-primary)] font-medium text-xl font-[family-name:var(--font-heading)] sm:hidden">Motherland</span>
+          <Coffee size={20} style={{ color: "#D4AF37" }} />
+          <span className="text-white font-semibold text-lg hidden sm:inline"
+            style={{ fontFamily: "var(--font-heading, 'Cormorant Garamond', Georgia, serif)" }}>
+            Motherland Admin
+          </span>
+          <span className="text-white font-semibold text-lg sm:hidden"
+            style={{ fontFamily: "var(--font-heading, 'Cormorant Garamond', Georgia, serif)" }}>
+            Motherland
+          </span>
         </div>
-        <div className="flex items-center gap-4 sm:gap-6">
-          <button onClick={() => router.refresh()} disabled={pending}
-            className="flex items-center gap-1.5 text-[var(--color-secondary)] hover:text-[var(--color-primary)] text-sm transition-colors font-bold disabled:opacity-50">
-            <RefreshCw size={14} className={pending ? 'animate-spin' : ''} /> <span className="hidden sm:inline">Refresh</span>
+        <div className="flex items-center gap-5">
+          <button
+            onClick={() => router.refresh()}
+            disabled={pending}
+            className="flex items-center gap-1.5 text-sm font-medium transition-colors disabled:opacity-50"
+            style={{ color: "#A89F91" }}
+            onMouseEnter={e => (e.currentTarget.style.color = "#FBF9F6")}
+            onMouseLeave={e => (e.currentTarget.style.color = "#A89F91")}
+          >
+            <RefreshCw size={14} className={pending ? "animate-spin" : ""} />
+            <span className="hidden sm:inline">Refresh</span>
           </button>
-          <div className="w-px h-4 bg-[rgba(255,255,255,0.1)] hidden sm:block"></div>
-          <button onClick={() => run(logoutAdmin)} disabled={pending}
-            className="flex items-center gap-1.5 text-[var(--color-secondary)] hover:text-red-400 text-sm transition-colors font-bold disabled:opacity-50">
-            <LogOut size={14} /> <span className="hidden sm:inline">Exit</span>
+          <div className="w-px h-4 hidden sm:block" style={{ background: "rgba(255,255,255,0.1)" }} />
+          <button
+            onClick={() => run(logoutAdmin)}
+            disabled={pending}
+            className="flex items-center gap-1.5 text-sm font-medium transition-colors disabled:opacity-50"
+            style={{ color: "#A89F91" }}
+            onMouseEnter={e => (e.currentTarget.style.color = "#f87171")}
+            onMouseLeave={e => (e.currentTarget.style.color = "#A89F91")}
+          >
+            <LogOut size={14} />
+            <span className="hidden sm:inline">Exit</span>
           </button>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8 relative">
-        {/* Loading Overlay for pending transitions */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        {/* ── Saving Overlay ───────────────────────────────────── */}
         <AnimatePresence>
           {pending && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
-              className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] px-4 py-2 bg-[#1A1512] border border-[var(--color-cta)] rounded-full shadow-[0_0_20px_rgba(212,175,55,0.2)] flex items-center gap-3"
+              className="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-5 py-2.5 rounded-full flex items-center gap-3 shadow-xl"
+              style={{ background: "#1A1512", border: "1px solid rgba(212,175,55,0.3)" }}
             >
-              <div className="w-4 h-4 border-2 border-[var(--color-cta)] border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-xs font-bold text-[var(--color-primary)] tracking-widest uppercase">Saving changes...</span>
+              <div className="w-4 h-4 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: "#D4AF37", borderTopColor: "transparent" }} />
+              <span className="text-xs font-bold tracking-widest uppercase" style={{ color: "#FBF9F6" }}>Saving changes...</span>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Stats */}
+        {/* ── Stat Cards ───────────────────────────────────────── */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {[
-            { label: 'Menu Items', value: categories.reduce((sum, c) => sum + c.items.length, 0), color: 'text-orange-400' },
-            { label: 'Gallery Images', value: galleryImages.length, color: 'text-blue-400' },
-            { label: 'Total Reviews', value: reviews.length, color: 'text-green-400' },
-            { label: 'Pending Reserves', value: reservations.filter(r => r.status === 'pending').length, color: 'text-[var(--color-cta)]' },
-          ].map(stat => (
-            <div key={stat.label} className="bg-[var(--color-surface)] rounded-xl p-5 border border-[rgba(255,255,255,0.05)] hover:border-[rgba(212,175,55,0.2)] transition-colors shadow-lg">
-              <p className="text-xs text-[var(--color-muted)] uppercase tracking-wider font-semibold">{stat.label}</p>
-              <p className={`text-3xl font-[family-name:var(--font-heading)] font-bold mt-2 ${stat.color}`}>{stat.value}</p>
+          {stats.map(stat => (
+            <div
+              key={stat.label}
+              className="rounded-xl p-5 shadow-lg"
+              style={{ background: "#211A15", border: "1px solid rgba(255,255,255,0.05)" }}
+            >
+              <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "#A89F91" }}>
+                {stat.label}
+              </p>
+              <p className={`text-3xl font-bold mt-2 ${stat.color}`}>{stat.value}</p>
             </div>
           ))}
         </div>
 
-        {/* Tabs */}
+        {/* ── Tab Bar ──────────────────────────────────────────── */}
         <div className="flex flex-wrap items-center gap-4 mb-6">
-          <div className="flex bg-[var(--color-surface)] rounded-xl border border-[rgba(255,255,255,0.05)] p-1 shadow-md max-w-full overflow-x-auto custom-scrollbar">
+          <div
+            className="flex p-1 rounded-xl shadow-md overflow-x-auto"
+            style={{ background: "#211A15", border: "1px solid rgba(255,255,255,0.05)" }}
+          >
             {TABS.map(t => (
-              <button key={t.id} onClick={() => setTab(t.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
-                  tab === t.id 
-                    ? 'bg-[var(--color-cta)] text-[#1A1311] shadow-[0_0_15px_rgba(212,175,55,0.3)]' 
-                    : 'text-[var(--color-secondary)] hover:text-[var(--color-primary)]'
-                  }`}>
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap"
+                style={
+                  tab === t.id
+                    ? { background: "#D4AF37", color: "#1A1311" }
+                    : { color: "#A89F91" }
+                }
+                onMouseEnter={e => { if (tab !== t.id) e.currentTarget.style.color = "#FBF9F6"; }}
+                onMouseLeave={e => { if (tab !== t.id) e.currentTarget.style.color = "#A89F91"; }}
+              >
                 <t.icon size={15} />
                 {t.label}
                 {(t.count ?? 0) > 0 && (
-                  <span className={`text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-full ${tab === t.id ? 'bg-[#1A1311]/20 text-[#1A1311]' : 'bg-[rgba(255,255,255,0.1)] text-[var(--color-primary)]'}`}>
+                  <span
+                    className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                    style={
+                      tab === t.id
+                        ? { background: "rgba(26,19,11,0.2)", color: "#1A1311" }
+                        : { background: "rgba(255,255,255,0.1)", color: "#FBF9F6" }
+                    }
+                  >
                     {t.count}
                   </span>
                 )}
@@ -126,19 +174,19 @@ export default function AdminDashboard({
           </div>
         </div>
 
-        {/* Content */}
+        {/* ── Tab Content ──────────────────────────────────────── */}
         <AnimatePresence mode="wait">
           <motion.div
             key={tab}
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
             className="w-full"
           >
             {tab === "menu" && (
-              <MenuManager 
-                categories={categories} 
+              <MenuManager
+                categories={categories}
                 onCreateCategory={(name) => run(() => createCategory(name, categories.length))}
                 onCreate={(item) => run(() => createMenuItem(item))}
                 onUpdate={(id, item) => run(() => updateMenuItem(id, item))}
@@ -147,7 +195,7 @@ export default function AdminDashboard({
             )}
 
             {tab === "gallery" && (
-              <GalleryManager 
+              <GalleryManager
                 images={galleryImages}
                 onCreate={(img) => run(() => createGalleryImage(img))}
                 onDelete={(id) => run(() => deleteGalleryImage(id))}
@@ -155,7 +203,7 @@ export default function AdminDashboard({
             )}
 
             {tab === "reviews" && (
-              <ReviewManager 
+              <ReviewManager
                 reviews={reviews}
                 onCreate={(rev) => run(() => createReview(rev))}
                 onTogglePublish={(id, pub) => run(() => toggleReviewPublished(id, pub))}
@@ -164,7 +212,7 @@ export default function AdminDashboard({
             )}
 
             {tab === "reservations" && (
-              <ReservationManager 
+              <ReservationManager
                 reservations={reservations}
                 onUpdateStatus={(id, status) => run(() => updateReservationStatus(id, status))}
               />
@@ -172,23 +220,6 @@ export default function AdminDashboard({
           </motion.div>
         </AnimatePresence>
       </div>
-
-      <style>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          height: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.02);
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(212, 175, 55, 0.3);
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(212, 175, 55, 0.5);
-        }
-      `}</style>
     </div>
   );
 }
