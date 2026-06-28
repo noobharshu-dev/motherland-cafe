@@ -1,0 +1,78 @@
+/* Admin layout - fully isolated from marketing styles */
+
+.admin-sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 280px;
+  background: #131313;
+  border-right: 1px solid #4d4635;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+  z-index: 50;
+  transform: translateX(-100%);
+  transition: transform 300ms ease;
+}
+
+@media (min-width: 768px) {
+  .admin-sidebar {
+    transform: translateX(0);
+  }
+}
+
+.admin-sidebar.sidebar-open {
+  transform: translateX(0);
+}
+
+.admin-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: #131313;
+  border-bottom: 1px solid #4d4635;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 39;
+}
+
+.admin-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .admin-header-inner {
+    padding-left: 280px;
+  }
+}
+
+.admin-main {
+  min-height: 100vh;
+  padding: 80px 16px 32px;
+}
+
+@media (min-width: 768px) {
+  .admin-main {
+    margin-left: 280px;
+    padding: 80px 32px 32px;
+  }
+}
+
+.admin-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 40;
+  display: none;
+}
+
+.admin-overlay.overlay-open {
+  display: block;
+}

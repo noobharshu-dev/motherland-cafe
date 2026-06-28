@@ -1,6 +1,33 @@
 'use client';
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
+
+const C = {
+  bg: '#131313',
+  surface: '#131313',
+  surfaceContainer: '#201f1f',
+  surfaceContainerLow: '#1c1b1b',
+  surfaceContainerHigh: '#2a2a2a',
+  surfaceContainerLowest: '#0e0e0e',
+  outline: '#4d4635',
+  primary: '#f2ca50',
+  onPrimary: '#3c2f00',
+  primaryContainer: '#d4af37',
+  onPrimaryContainer: '#554300',
+  onSurface: '#e5e2e1',
+  onSurfaceVariant: '#d0c5af',
+  tertiary: '#e6cd82',
+  error: '#ffb4ab',
+  errorContainer: '#93000a',
+};
+
+const S = {
+  label: { fontSize: '11px', fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase' as const },
+  body: { fontSize: '14px', lineHeight: '20px' },
+  bodyLg: { fontSize: '16px', lineHeight: '24px' },
+  headingSm: { fontSize: '18px', fontWeight: 600, fontFamily: "'Playfair Display', serif" },
+  headingLg: { fontSize: '28px', fontWeight: 600, fontFamily: "'Playfair Display', serif" },
+  displayLg: { fontSize: '40px', fontWeight: 700, fontFamily: "'Playfair Display', serif", lineHeight: 1 },
+};
 
 export default function MenuManagement() {
   const [items, setItems] = useState<any[]>([]);
@@ -9,155 +36,251 @@ export default function MenuManagement() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/menu/items').then(res => res.json()),
-      fetch('/api/admin/stats').then(res => res.json())
+      fetch('/api/menu/items').then(r => r.json()),
+      fetch('/api/admin/stats').then(r => r.json()),
     ]).then(([itemsData, statsData]) => {
-      setItems(itemsData);
+      setItems(Array.isArray(itemsData) ? itemsData : []);
       setStats(statsData);
       setLoading(false);
-    });
+    }).catch(() => setLoading(false));
   }, []);
 
-  const handleToggleVisibility = async (id: string, currentVisible: boolean) => {
+  const handleToggleVisibility = async (id: string, current: boolean) => {
     const res = await fetch(`/api/menu/items/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ isVisible: !currentVisible })
+      method: 'PUT', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ isVisible: !current }),
     });
-    if (res.ok) {
-      setItems(prev => prev.map(item => item.id === id ? { ...item, isVisible: !currentVisible } : item));
-    }
+    if (res.ok) setItems(prev => prev.map(i => i.id === id ? { ...i, isVisible: !current } : i));
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this menu item?')) {
-      const res = await fetch(`/api/menu/items/${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        setItems(prev => prev.filter(item => item.id !== id));
-      }
-    }
+    if (!confirm('Delete this item?')) return;
+    const res = await fetch(`/api/menu/items/${id}`, { method: 'DELETE' });
+    if (res.ok) setItems(prev => prev.filter(i => i.id !== id));
   };
 
-  if (loading) return <div className="p-4 text-on-surface">Loading menu...</div>;
+  if (loading) return <div style={{ padding: '40px', color: C.onSurfaceVariant }}>Loading menu...</div>;
 
   return (
-    <>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-sm mb-lg">
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      {/* Page Header */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', marginBottom: '32px' }}>
         <div>
-          <h2 className="font-headline-lg text-headline-lg md:text-headline-lg text-on-surface font-semibold mb-1">Active Menu</h2>
-          <p className="font-body-sm text-body-sm text-on-surface-variant">Manage your culinary offerings and categories.</p>
+          <h2 style={{ ...S.headingLg, color: C.onSurface, margin: '0 0 4px' }}>Active Menu</h2>
+          <p style={{ ...S.body, color: C.onSurfaceVariant, margin: 0 }}>Manage your culinary offerings and categories.</p>
         </div>
-        <div className="flex flex-wrap items-center gap-sm w-full sm:w-auto">
-          <button className="flex-1 sm:flex-none flex items-center justify-center gap-xs px-md py-xs border border-on-surface text-on-surface hover:bg-surface-container-high transition-colors rounded font-label-md text-label-md h-10">
-            <span className="material-symbols-outlined text-[18px]">add</span>
-            Add New Category
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <button style={{
+            display: 'flex', alignItems: 'center', gap: '6px',
+            padding: '0 20px', height: '40px',
+            background: 'transparent', border: `1px solid ${C.onSurface}`,
+            borderRadius: '4px', color: C.onSurface, cursor: 'pointer',
+            ...S.label,
+          }}>
+            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add</span>
+            Add Category
           </button>
-          <button className="flex-1 sm:flex-none flex items-center justify-center gap-xs px-md py-xs bg-primary-container text-on-primary-container hover:bg-primary transition-colors rounded font-label-md text-label-md font-bold h-10">
-            <span className="material-symbols-outlined text-[18px]">add_circle</span>
+          <button style={{
+            display: 'flex', alignItems: 'center', gap: '6px',
+            padding: '0 20px', height: '40px',
+            background: C.primaryContainer, border: 'none',
+            borderRadius: '4px', color: C.onPrimaryContainer, cursor: 'pointer',
+            ...S.label,
+          }}>
+            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add_circle</span>
             Add New Item
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-md mb-lg">
-        <StatCard label="Menu Items" icon="restaurant" value={stats?.menuItems || 0} subText="Total Items" subTextColor="text-primary" />
-        <StatCard label="Gallery Images" icon="image" value={stats?.galleryImages || 0} subText="Up to date" subTextColor="text-on-surface-variant" />
-        <StatCard label="Total Reviews" icon="star" value={stats?.totalReviews || 0} subText={`${stats?.avgRating || 0} Avg Rating`} subTextColor="text-primary" />
-        <StatCard label="Pending Res" icon="pending_actions" value={stats?.pendingReservations || 0} subText="Requires attention" subTextColor="text-tertiary" highlight={stats?.pendingReservations > 0} />
+      {/* Stats Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', marginBottom: '32px' }}>
+        {[
+          { label: 'Menu Items', icon: 'restaurant', value: stats?.menuItems ?? 0, sub: 'Total Items', subColor: C.primary },
+          { label: 'Gallery Images', icon: 'image', value: stats?.galleryImages ?? 0, sub: 'Up to date', subColor: C.onSurfaceVariant },
+          { label: 'Total Reviews', icon: 'star', value: stats?.totalReviews ?? 0, sub: `${stats?.avgRating ?? 0} Avg Rating`, subColor: C.primary },
+          { label: 'Pending Res', icon: 'pending_actions', value: stats?.pendingReservations ?? 0, sub: 'Requires attention', subColor: C.tertiary, highlight: (stats?.pendingReservations ?? 0) > 0 },
+        ].map(card => (
+          <div key={card.label} style={{
+            background: C.surfaceContainer, border: `1px solid ${C.outline}`,
+            borderRadius: '8px', padding: '20px',
+            display: 'flex', flexDirection: 'column', gap: '6px',
+            position: 'relative', overflow: 'hidden',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <span style={{ ...S.label, color: card.highlight ? C.tertiary : C.onSurfaceVariant }}>{card.label}</span>
+              <span className="material-symbols-outlined" style={{ fontSize: '20px', color: card.highlight ? C.tertiary : C.onSurfaceVariant }}>{card.icon}</span>
+            </div>
+            <div style={{ ...S.displayLg, color: C.onSurface }}>{card.value}</div>
+            <div style={{ ...S.body, color: card.subColor }}>{card.sub}</div>
+          </div>
+        ))}
       </div>
 
-      <div className="bg-surface border border-outline-variant rounded-lg overflow-hidden flex flex-col shadow-[0_8px_24px_rgba(0,0,0,0.2)]">
-        <div className="bg-surface-container-low border-b border-outline-variant px-md py-sm flex justify-between items-center sticky top-20 z-20">
-          <h3 className="font-headline-sm text-headline-sm text-on-surface font-semibold flex items-center gap-xs">
-            Main Course
-            <span className="px-2 py-0.5 bg-surface-container-high text-on-surface-variant rounded-full font-label-md text-[10px]">{items.length} Items</span>
+      {/* Menu Table */}
+      <div style={{ background: C.surface, border: `1px solid ${C.outline}`, borderRadius: '8px', overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
+        {/* Category header */}
+        <div style={{ background: C.surfaceContainerLow, borderBottom: `1px solid ${C.outline}`, padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3 style={{ ...S.headingSm, color: C.onSurface, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+            All Items
+            <span style={{ background: C.surfaceContainerHigh, color: C.onSurfaceVariant, borderRadius: '999px', padding: '2px 10px', fontSize: '10px', fontWeight: 600 }}>{items.length} Items</span>
           </h3>
-          <button className="text-on-surface-variant hover:text-primary transition-colors p-1 rounded-md hover:bg-surface-container">
-            <span className="material-symbols-outlined text-[20px]">more_horiz</span>
-          </button>
         </div>
 
-        <div className="hidden md:grid grid-cols-[80px_2fr_1fr_1fr_100px] gap-4 px-md py-xs border-b border-outline-variant bg-surface-container-lowest font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">
-          <div>Image</div>
-          <div>Item Details</div>
-          <div>Tags &amp; Status</div>
-          <div>Price</div>
-          <div className="text-right">Actions</div>
-        </div>
-
-        <div className="flex flex-col">
-          {items.map((item) => (
-            <div key={item.id} className={`group flex flex-col md:grid md:grid-cols-[80px_2fr_1fr_1fr_100px] gap-4 p-md border-b border-surface-container-high hover:bg-surface-container/50 transition-colors items-center relative ${!item.isVisible ? 'opacity-60' : ''}`}>
-              <div className="absolute top-4 right-4 md:hidden">
-                <button className="text-on-surface-variant p-1">
-                  <span className="material-symbols-outlined">more_vert</span>
-                </button>
-              </div>
-
-              <div className="w-20 h-20 rounded-md overflow-hidden border border-outline-variant bg-surface-container-high shrink-0 self-start md:self-center flex items-center justify-center">
-                {item.imageUrl ? (
-                  <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                ) : (
-                  <span className="material-symbols-outlined text-on-surface-variant text-[32px] grayscale">image_not_supported</span>
-                )}
-              </div>
-
-              <div className="flex flex-col gap-1 w-full mt-2 md:mt-0">
-                <div className="flex items-center gap-2">
-                  <h4 className="font-headline-sm text-headline-sm text-on-surface m-0 text-base">{item.name}</h4>
-                  {!item.isVisible && <span className="px-2 py-0.5 bg-surface-variant text-on-surface-variant rounded-sm font-label-md text-[9px] uppercase tracking-wider">Out of Season</span>}
-                </div>
-                <p className="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 pr-4 md:pr-0">{item.description}</p>
-              </div>
-
-              <div className="flex flex-wrap gap-2 w-full mt-2 md:mt-0">
-                {item.isVegan && <span className="inline-flex items-center gap-1 px-2 py-1 border rounded font-label-md text-[10px] bg-surface-container-high text-on-surface-variant border-outline-variant">Vegan</span>}
-                {item.isVegetarian && <span className="inline-flex items-center gap-1 px-2 py-1 border rounded font-label-md text-[10px] bg-surface-container-high text-on-surface-variant border-outline-variant">Veg</span>}
-                {item.isGlutenFree && <span className="inline-flex items-center gap-1 px-2 py-1 border rounded font-label-md text-[10px] bg-surface-container-high text-on-surface-variant border-outline-variant">GF</span>}
-                {item.isFeatured && <span className="inline-flex items-center gap-1 px-2 py-1 border rounded font-label-md text-[10px] bg-tertiary-container/20 text-tertiary border-tertiary/30"><span className="material-symbols-outlined text-[12px] fill-current">star</span>Featured</span>}
-              </div>
-
-              <div className="font-body-lg text-body-lg text-on-surface font-semibold w-full mt-2 md:mt-0 flex justify-between md:block">
-                <span className="md:hidden text-on-surface-variant font-label-md text-label-md uppercase">Price</span>
-                ${item.price.toFixed(2)}
-              </div>
-
-              <div className="hidden md:flex justify-end gap-2 items-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <button className="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors" title="Edit">
-                  <span className="material-symbols-outlined text-[18px]">edit</span>
-                </button>
-                <button onClick={() => handleToggleVisibility(item.id, item.isVisible)} className={`w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant transition-colors ${item.isVisible ? 'hover:text-error hover:bg-error-container/20' : 'hover:text-primary hover:bg-surface-container-high'}`} title={item.isVisible ? 'Hide' : 'Restore Visibility'}>
-                  <span className="material-symbols-outlined text-[18px]">{item.isVisible ? 'visibility_off' : 'visibility'}</span>
-                </button>
-                <button onClick={() => handleDelete(item.id)} className="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:text-error hover:bg-error-container/20 transition-colors" title="Delete">
-                  <span className="material-symbols-outlined text-[18px]">delete</span>
-                </button>
-              </div>
-            </div>
+        {/* Table header - desktop only */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '80px 1fr 140px 100px 120px',
+          gap: '16px', padding: '10px 24px',
+          borderBottom: `1px solid ${C.outline}`,
+          background: C.surfaceContainerLowest,
+        }} className="hidden md:grid">
+          {['Image', 'Item Details', 'Tags & Status', 'Price', 'Actions'].map((h, i) => (
+            <div key={h} style={{ ...S.label, color: C.onSurfaceVariant, textAlign: i === 4 ? 'right' : 'left' }}>{h}</div>
           ))}
         </div>
 
-        <div className="bg-surface-container-lowest p-sm flex justify-center border-t border-outline-variant">
-          <button className="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2 py-1 px-4 rounded-full hover:bg-surface-container-high">
-            Load More Items
-            <span className="material-symbols-outlined text-[16px]">expand_more</span>
-          </button>
+        {/* Rows */}
+        {items.length === 0 ? (
+          <div style={{ padding: '48px', textAlign: 'center', color: C.onSurfaceVariant }}>
+            <span className="material-symbols-outlined" style={{ fontSize: '48px', display: 'block', marginBottom: '12px' }}>restaurant_menu</span>
+            No menu items yet. Add your first item!
+          </div>
+        ) : (
+          <>
+            {/* Desktop rows */}
+            <div className="hidden md:block">
+              {items.map(item => (
+                <div
+                  key={`d-${item.id}`}
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '80px 1fr 140px 100px 120px',
+                    gap: '16px', padding: '16px 24px',
+                    borderBottom: `1px solid ${C.surfaceContainerHigh}`,
+                    alignItems: 'center',
+                    opacity: item.isVisible ? 1 : 0.55,
+                  }}
+                >
+                  {/* Image */}
+                  <div style={{ width: '72px', height: '72px', borderRadius: '6px', overflow: 'hidden', border: `1px solid ${C.outline}`, background: C.surfaceContainerHigh, flexShrink: 0 }}>
+                    {item.imageUrl
+                      ? <img src={item.imageUrl} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}><span className="material-symbols-outlined" style={{ color: C.onSurfaceVariant, fontSize: '28px' }}>image_not_supported</span></div>
+                    }
+                  </div>
+
+                  {/* Details */}
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                      <h4 style={{ ...S.headingSm, color: C.onSurface, margin: 0, fontSize: '15px' }}>{item.name}</h4>
+                      {!item.isVisible && <span style={{ ...S.label, background: C.surfaceContainer, color: C.onSurfaceVariant, padding: '2px 8px', borderRadius: '4px', fontSize: '9px' }}>Hidden</span>}
+                    </div>
+                    <p style={{ ...S.body, color: C.onSurfaceVariant, margin: 0, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>{item.description}</p>
+                  </div>
+
+                  {/* Tags */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                    {item.isVegan && <Tag>Vegan</Tag>}
+                    {item.isVegetarian && <Tag>Veg</Tag>}
+                    {item.isGlutenFree && <Tag>GF</Tag>}
+                    {item.isFeatured && <GoldTag>⭐ Featured</GoldTag>}
+                  </div>
+
+                  {/* Price */}
+                  <div style={{ ...S.bodyLg, color: C.onSurface, fontWeight: 600 }}>${item.price?.toFixed(2)}</div>
+
+                  {/* Actions */}
+                  <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
+                    <IconBtn title={item.isVisible ? 'Hide' : 'Show'} onClick={() => handleToggleVisibility(item.id, item.isVisible)}>
+                      {item.isVisible ? 'visibility_off' : 'visibility'}
+                    </IconBtn>
+                    <IconBtn title="Delete" onClick={() => handleDelete(item.id)} danger>
+                      delete
+                    </IconBtn>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Mobile rows */}
+            <div className="md:hidden">
+              {items.map(item => (
+                <div key={`m-${item.id}`} style={{ padding: '16px', borderBottom: `1px solid ${C.surfaceContainerHigh}`, opacity: item.isVisible ? 1 : 0.55 }}>
+                  <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+                    <div style={{ width: '64px', height: '64px', borderRadius: '6px', overflow: 'hidden', border: `1px solid ${C.outline}`, flexShrink: 0, background: C.surfaceContainerHigh }}>
+                      {item.imageUrl
+                        ? <img src={item.imageUrl} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><span className="material-symbols-outlined" style={{ color: C.onSurfaceVariant, fontSize: '24px' }}>image_not_supported</span></div>
+                      }
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 600, color: C.onSurface, marginBottom: '4px', fontSize: '15px' }}>{item.name}</div>
+                      <div style={{ color: C.onSurfaceVariant, fontSize: '12px', marginBottom: '8px' }}>{item.description}</div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ color: C.onSurface, fontWeight: 600 }}>${item.price?.toFixed(2)}</span>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button onClick={() => handleToggleVisibility(item.id, item.isVisible)} style={{ background: 'none', border: 'none', color: C.onSurfaceVariant, cursor: 'pointer', padding: '4px', lineHeight: 0 }}>
+                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>{item.isVisible ? 'visibility_off' : 'visibility'}</span>
+                          </button>
+                          <button onClick={() => handleDelete(item.id)} style={{ background: 'none', border: 'none', color: C.error, cursor: 'pointer', padding: '4px', lineHeight: 0 }}>
+                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>delete</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Footer */}
+        <div style={{ background: C.surfaceContainerLowest, padding: '12px', display: 'flex', justifyContent: 'center', borderTop: `1px solid ${C.outline}` }}>
+          <span style={{ ...S.label, color: C.onSurfaceVariant }}>{items.length} item{items.length !== 1 ? 's' : ''} total</span>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
-function StatCard({ label, icon, value, subText, subTextColor, highlight }: any) {
+function Tag({ children }: { children: React.ReactNode }) {
   return (
-    <div className={`bg-surface-container border border-outline-variant rounded-lg p-md flex flex-col gap-xs hover:bg-surface-container-high transition-colors relative overflow-hidden`}>
-      {highlight && <div className="absolute right-0 top-0 w-16 h-16 bg-tertiary-container/10 rounded-bl-full"></div>}
-      <div className="flex justify-between items-center text-on-surface-variant mb-2">
-        <span className={`font-label-md text-label-md uppercase tracking-wider ${highlight ? 'text-tertiary' : ''}`}>{label}</span>
-        <span className={`material-symbols-outlined text-[20px] ${highlight ? 'text-tertiary' : ''}`}>{icon}</span>
-      </div>
-      <div className="font-display-lg text-display-lg text-on-surface">{value}</div>
-      <div className={`font-body-sm text-body-sm ${subTextColor}`}>{subText}</div>
-    </div>
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', padding: '3px 8px',
+      background: '#2a2a2a', color: '#d0c5af',
+      border: '1px solid #4d4635', borderRadius: '4px',
+      fontSize: '10px', fontWeight: 600, letterSpacing: '0.04em',
+    }}>{children}</span>
+  );
+}
+
+function GoldTag({ children }: { children: React.ReactNode }) {
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', padding: '3px 8px',
+      background: 'rgba(201, 177, 106, 0.15)', color: '#e6cd82',
+      border: '1px solid rgba(230, 205, 130, 0.3)', borderRadius: '4px',
+      fontSize: '10px', fontWeight: 600,
+    }}>{children}</span>
+  );
+}
+
+function IconBtn({ children, onClick, title, danger }: { children: string; onClick: () => void; title?: string; danger?: boolean }) {
+  return (
+    <button
+      title={title}
+      onClick={onClick}
+      style={{
+        width: '32px', height: '32px', borderRadius: '50%',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: 'none', border: 'none', cursor: 'pointer',
+        color: danger ? '#ffb4ab' : '#d0c5af',
+        transition: 'all 150ms',
+      }}
+    >
+      <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>{children}</span>
+    </button>
   );
 }

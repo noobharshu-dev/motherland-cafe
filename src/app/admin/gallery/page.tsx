@@ -1,6 +1,14 @@
 'use client';
-
 import { useState, useEffect } from 'react';
+
+const C = {
+  surface: '#131313', surfaceContainer: '#201f1f',
+  surfaceContainerHigh: '#2a2a2a', outline: '#4d4635',
+  primary: '#f2ca50', onPrimary: '#3c2f00',
+  primaryContainer: '#d4af37', onPrimaryContainer: '#554300',
+  onSurface: '#e5e2e1', onSurfaceVariant: '#d0c5af',
+  error: '#ffb4ab', errorContainer: 'rgba(147, 0, 10, 0.6)',
+};
 
 export default function GalleryManagement() {
   const [images, setImages] = useState<any[]>([]);
@@ -8,55 +16,89 @@ export default function GalleryManagement() {
 
   useEffect(() => {
     fetch('/api/gallery')
-      .then(res => res.json())
-      .then(data => {
-        setImages(data);
-        setLoading(false);
-      });
+      .then(r => r.json())
+      .then(data => { setImages(Array.isArray(data) ? data : []); setLoading(false); })
+      .catch(() => setLoading(false));
   }, []);
 
   const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this image?')) {
-      const res = await fetch(`/api/gallery/${id}`, { method: 'DELETE' });
-      if (res.ok) {
-        setImages(prev => prev.filter(img => img.id !== id));
-      }
-    }
+    if (!confirm('Delete this image?')) return;
+    const res = await fetch(`/api/gallery/${id}`, { method: 'DELETE' });
+    if (res.ok) setImages(prev => prev.filter(i => i.id !== id));
   };
 
-  if (loading) return <div className="p-4 text-on-surface">Loading gallery...</div>;
+  if (loading) return <div style={{ padding: '40px', color: C.onSurfaceVariant, fontFamily: "'Inter', sans-serif" }}>Loading gallery...</div>;
+
   return (
-    <>
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-sm mb-lg">
+    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', marginBottom: '32px', flexWrap: 'wrap' }}>
         <div>
-          <h2 className="font-headline-lg text-headline-lg md:text-headline-lg text-on-surface font-semibold mb-1">Gallery</h2>
-          <p className="font-body-sm text-body-sm text-on-surface-variant">Manage cafe photos and menus.</p>
+          <h2 style={{ fontSize: '28px', fontWeight: 600, fontFamily: "'Playfair Display', serif", color: C.onSurface, margin: '0 0 4px' }}>Gallery</h2>
+          <p style={{ fontSize: '14px', color: C.onSurfaceVariant, margin: 0 }}>Manage cafe photos and media.</p>
         </div>
-        <div className="flex flex-wrap items-center gap-sm w-full sm:w-auto">
-          <button className="flex-1 sm:flex-none flex items-center justify-center gap-xs px-md py-xs bg-primary-container text-on-primary-container hover:bg-primary transition-colors rounded font-label-md text-label-md font-bold h-10">
-            <span className="material-symbols-outlined text-[18px]">add_photo_alternate</span>
-            Upload Image
-          </button>
-        </div>
+        <button style={{
+          display: 'flex', alignItems: 'center', gap: '8px',
+          padding: '0 20px', height: '40px',
+          background: C.primaryContainer, border: 'none',
+          borderRadius: '6px', color: C.onPrimaryContainer,
+          fontSize: '12px', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase',
+          cursor: 'pointer',
+        }}>
+          <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add_photo_alternate</span>
+          Upload Image
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-md">
-        {images.map(img => (
-          <div key={img.id} className="bg-surface-container border border-outline-variant rounded-lg overflow-hidden group">
-            <div className="h-48 overflow-hidden relative">
-              <img src={img.imageUrl} alt={img.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                <button onClick={() => handleDelete(img.id)} className="w-10 h-10 bg-error-container/80 rounded-full flex items-center justify-center text-on-error-container hover:bg-error hover:text-on-error transition-colors">
-                  <span className="material-symbols-outlined">delete</span>
-                </button>
+      {images.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '80px 40px', background: C.surfaceContainer, border: `1px solid ${C.outline}`, borderRadius: '12px', color: C.onSurfaceVariant }}>
+          <span className="material-symbols-outlined" style={{ fontSize: '56px', display: 'block', marginBottom: '16px' }}>photo_library</span>
+          <p style={{ fontSize: '16px', margin: 0 }}>No gallery images yet. Upload your first photo!</p>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
+          {images.map(img => (
+            <div
+              key={img.id}
+              style={{ background: C.surfaceContainer, border: `1px solid ${C.outline}`, borderRadius: '10px', overflow: 'hidden', position: 'relative' }}
+            >
+              <div style={{ position: 'relative', height: '180px', overflow: 'hidden' }}>
+                <img
+                  src={img.imageUrl}
+                  alt={img.title}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 400ms' }}
+                />
+                <div
+                  style={{
+                    position: 'absolute', inset: 0,
+                    background: 'rgba(0,0,0,0.5)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    opacity: 0, transition: 'opacity 200ms',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = '0')}
+                >
+                  <button
+                    onClick={() => handleDelete(img.id)}
+                    style={{
+                      width: '44px', height: '44px', borderRadius: '50%',
+                      background: C.errorContainer, border: 'none',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      cursor: 'pointer', color: C.error,
+                    }}
+                  >
+                    <span className="material-symbols-outlined" style={{ fontSize: '22px' }}>delete</span>
+                  </button>
+                </div>
+              </div>
+              <div style={{ padding: '10px 12px' }}>
+                <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: C.onSurface, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{img.title}</p>
+                {img.category && <p style={{ margin: '2px 0 0', fontSize: '11px', color: C.onSurfaceVariant, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{img.category}</p>}
               </div>
             </div>
-            <div className="p-3">
-              <p className="font-label-md text-on-surface">{img.title}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

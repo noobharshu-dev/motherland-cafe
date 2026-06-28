@@ -112,15 +112,19 @@
   --text-body-sm--font-weight: 400;
 }
 
-/* ── Design Tokens ─────────────────────────────────────────── */
-:root {
+/* ── Marketing-specific overrides (scoped to .mkt wrapper) ─── */
+.mkt {
   --color-primary:    #FBF9F6; /* Ivory text */
   --color-secondary:  #A89F91; /* Latte foam */
+  --color-surface:    #211A15; /* Mocha surface */
+}
+
+/* ── Shared design tokens (safe for all routes) ─────────── */
+:root {
   --color-cta:        #D4AF37; /* Elegant muted gold */
   --color-bg:         #14100D; /* Deep espresso black */
   --color-text:       #FBF9F6;
   --color-muted:      #A89F91;
-  --color-surface:    #211A15; /* Mocha surface */
   --color-border:     rgba(251, 249, 246, 0.1);
 
   --font-heading: 'Cormorant Garamond', Georgia, serif;
