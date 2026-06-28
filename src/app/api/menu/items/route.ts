@@ -19,12 +19,25 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const data = await req.json();
+
+    // Validate required fields
+    if (!data.categoryId || typeof data.categoryId !== 'string' || data.categoryId.trim() === '') {
+      return NextResponse.json({ error: 'categoryId is required' }, { status: 400 });
+    }
+    if (!data.name || typeof data.name !== 'string' || data.name.trim() === '') {
+      return NextResponse.json({ error: 'name is required' }, { status: 400 });
+    }
+    const price = parseFloat(data.price);
+    if (isNaN(price)) {
+      return NextResponse.json({ error: 'price must be a valid number' }, { status: 400 });
+    }
+
     const item = await prisma.menuItem.create({
       data: {
-        categoryId: data.categoryId,
-        name: data.name,
-        description: data.description,
-        price: parseFloat(data.price),
+        categoryId: data.categoryId.trim(),
+        name: data.name.trim(),
+        description: (data.description || '').trim(),
+        price,
         imageUrl: data.imageUrl || '',
         isVegetarian: data.isVegetarian || false,
         isVegan: data.isVegan || false,
@@ -34,7 +47,11 @@ export async function POST(req: Request) {
       }
     });
     return NextResponse.json(item);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to create item' }, { status: 500 });
+  } catch (error: any) {
+    console.error('[POST /api/menu/items]', error?.message ?? error);
+    return NextResponse.json(
+      { error: 'Failed to create item', detail: error?.message ?? String(error) },
+      { status: 500 }
+    );
   }
 }

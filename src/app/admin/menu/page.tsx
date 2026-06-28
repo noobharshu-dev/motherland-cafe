@@ -377,6 +377,12 @@ function ItemModal({ onClose, onSaved, categories, editingItem }: { onClose: () 
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+
+    // Frontend validation
+    if (!formData.name.trim()) { alert('Please enter an item name.'); return; }
+    if (!formData.price || isNaN(parseFloat(formData.price as any))) { alert('Please enter a valid price.'); return; }
+    if (!formData.categoryId) { alert('Please select a category. If no categories exist yet, create one first using \'Add Category\'.'); return; }
+
     setSaving(true);
     const url = editingItem ? `/api/menu/items/${editingItem.id}` : '/api/menu/items';
     const method = editingItem ? 'PUT' : 'POST';
@@ -395,6 +401,9 @@ function ItemModal({ onClose, onSaved, categories, editingItem }: { onClose: () 
     if (res.ok) {
       onSaved();
       onClose();
+    } else {
+      const err = await res.json().catch(() => ({}));
+      alert(`Failed to save item: ${err.detail || err.error || res.status}`);
     }
   };
 
@@ -414,6 +423,16 @@ function ItemModal({ onClose, onSaved, categories, editingItem }: { onClose: () 
 
         {/* Body */}
         <div style={{ padding: '24px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '24px', scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+
+          {/* No-category warning */}
+          {categories.length === 0 && (
+            <div style={{ background: 'rgba(255,180,0,0.1)', border: '1px solid rgba(255,180,0,0.4)', borderRadius: '8px', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span className="material-symbols-outlined" style={{ fontSize: '20px', color: '#f2ca50', flexShrink: 0 }}>warning</span>
+              <p style={{ margin: 0, fontSize: '13px', color: '#f2ca50' }}>
+                No categories yet. Close this modal and click <strong>Add Category</strong> first, then come back to add items.
+              </p>
+            </div>
+          )}
           
           {/* Image Upload */}
           <div>
@@ -488,7 +507,7 @@ function ItemModal({ onClose, onSaved, categories, editingItem }: { onClose: () 
           <div>
             <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Description</label>
             <textarea 
-              required rows={3} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})}
+              rows={3} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})}
               placeholder="Describe the flavor profile..."
               style={{ width: '100%', background: '#121212', border: '1px solid #2c2c2c', borderRadius: '4px', padding: '12px', color: '#e5e2e1', fontSize: '16px', outline: 'none', resize: 'none' }}
             />
@@ -513,7 +532,19 @@ function ItemModal({ onClose, onSaved, categories, editingItem }: { onClose: () 
         {/* Footer */}
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', padding: '16px 24px', background: '#1a1a1a', borderTop: '1px solid #2c2c2c', flexShrink: 0 }}>
           <button type="button" onClick={onClose} style={{ background: 'none', border: 'none', color: '#d0c5af', textTransform: 'uppercase', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', cursor: 'pointer' }}>Cancel</button>
-          <button type="button" onClick={handleSubmit} disabled={saving} style={{ background: '#d4af37', color: '#000', border: 'none', borderRadius: '4px', padding: '12px 32px', textTransform: 'uppercase', fontSize: '12px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={saving || !formData.categoryId || !formData.name.trim()}
+            style={{
+              background: (saving || !formData.categoryId || !formData.name.trim()) ? '#555' : '#d4af37',
+              color: '#000', border: 'none', borderRadius: '4px', padding: '12px 32px',
+              textTransform: 'uppercase', fontSize: '12px', fontWeight: 600,
+              cursor: (saving || !formData.categoryId || !formData.name.trim()) ? 'not-allowed' : 'pointer',
+              display: 'flex', alignItems: 'center', gap: '8px',
+              opacity: (saving || !formData.categoryId || !formData.name.trim()) ? 0.6 : 1,
+            }}
+          >
             <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>{editingItem ? 'save' : 'add'}</span>
             {saving ? 'Saving...' : editingItem ? 'Save Changes' : 'Add Item'}
           </button>
