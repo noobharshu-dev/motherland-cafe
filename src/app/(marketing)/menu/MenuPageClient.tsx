@@ -5,6 +5,7 @@ import Image from "next/image";
 import Badge from "@/components/Badge";
 import { motion, AnimatePresence } from "framer-motion";
 import AnimatedSection from "@/components/AnimatedSection";
+import { getCloudinaryUrl } from "@/lib/cloudinary";
 
 interface MenuItem {
   id: string;
@@ -162,7 +163,7 @@ export default function MenuPageClient({ categories }: { categories: MenuCategor
                   layout
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+                    gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
                     gap: "1.25rem",
                   }}
                 >
@@ -171,35 +172,57 @@ export default function MenuPageClient({ categories }: { categories: MenuCategor
                     <motion.div 
                       key={item.id} 
                       layout
-                      initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                      initial={{ opacity: 0, scale: 0.95, y: 20 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.9, y: -20 }}
-                      whileHover={{ scale: 1.02, y: -5, boxShadow: "0 12px 40px rgba(0,0,0,0.4)" }}
+                      whileHover={{ y: -4, boxShadow: "0 12px 40px rgba(0,0,0,0.4)" }}
                       transition={{ type: "spring", stiffness: 100, damping: 20, delay: index * 0.05 }}
-                      className="card" 
-                      style={{ display: "flex", cursor: "pointer" }}
+                      className="card"
+                      style={{ display: "flex", flexDirection: "column", cursor: "pointer", overflow: "hidden" }}
                     >
-                      <div style={{ position: "relative", width: "6.5rem", flexShrink: 0, overflow: "hidden" }}>
+                      {/* 4:3 Image */}
+                      <div style={{ position: "relative", aspectRatio: "4/3", overflow: "hidden", flexShrink: 0 }}>
                         <Image
-                          src={item.imageUrl}
+                          src={getCloudinaryUrl(item.imageUrl)}
                           alt={item.name}
                           fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           className="object-cover transition-transform duration-500 hover:scale-105"
                         />
+                        {/* Dietary badges overlay */}
+                        <div style={{ position: "absolute", bottom: "8px", left: "8px", zIndex: 1 }}>
+                          <Badge isVegetarian={item.isVegetarian} isVegan={item.isVegan} isGlutenFree={item.isGlutenFree} />
+                        </div>
                       </div>
-                      <div style={{ padding: "1.25rem", flex: 1 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem" }}>
-                          <h3 style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", fontWeight: 700, color: "var(--color-primary)", maxWidth: "160px", lineHeight: 1.25 }}>
+
+                      {/* Fixed-height content */}
+                      <div style={{ padding: "1rem", display: "flex", flexDirection: "column", gap: "0.375rem", flex: 1 }}>
+                        {/* Name + Price row */}
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: "0.5rem" }}>
+                          <h3
+                            style={{
+                              fontFamily: "var(--font-heading)", fontSize: "1.05rem", fontWeight: 700,
+                              color: "var(--color-primary)", lineHeight: 1.25, margin: 0,
+                              whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", flex: 1,
+                            }}
+                          >
                             {item.name}
                           </h3>
-                          <span style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "1rem", color: "var(--color-primary)", flexShrink: 0, marginLeft: "0.5rem" }}>
+                          <span style={{ fontFamily: "var(--font-body)", fontWeight: 700, fontSize: "1rem", color: "var(--color-primary)", flexShrink: 0 }}>
                             ₹{item.price}
                           </span>
                         </div>
-                        <p style={{ fontSize: "0.82rem", color: "var(--color-muted)", lineHeight: 1.5, marginBottom: "0.75rem", fontWeight: 500 }}>
+
+                        {/* Description — 2 lines max */}
+                        <p
+                          style={{
+                            fontSize: "0.8rem", color: "var(--color-muted)", lineHeight: 1.5, margin: 0,
+                            overflow: "hidden", display: "-webkit-box",
+                            WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as const,
+                          }}
+                        >
                           {item.description}
                         </p>
-                        <Badge isVegetarian={item.isVegetarian} isVegan={item.isVegan} isGlutenFree={item.isGlutenFree} />
                       </div>
                     </motion.div>
                   ))}

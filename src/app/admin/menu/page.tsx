@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
+import { getCloudinaryUrl } from '@/lib/cloudinary';
 
 const C = {
   bg: '#131313', surface: '#131313', surfaceContainer: '#201f1f',
@@ -133,9 +134,9 @@ export default function MenuManagement() {
         ))}
       </div>
 
-      {/* Menu Table */}
+      {/* Menu Card Grid */}
       <div style={{ background: C.surface, border: `1px solid ${C.outline}`, borderRadius: '8px', overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
-        {/* Category header */}
+        {/* Section header */}
         <div style={{ background: C.surfaceContainerLow, borderBottom: `1px solid ${C.outline}`, padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h3 style={{ ...S.headingSm, color: C.onSurface, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
             All Items
@@ -143,119 +144,80 @@ export default function MenuManagement() {
           </h3>
         </div>
 
-        {/* Table header - desktop only */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '80px 1fr 140px 100px 120px',
-          gap: '16px', padding: '10px 24px',
-          borderBottom: `1px solid ${C.outline}`,
-          background: C.surfaceContainerLowest,
-        }} className="hidden md:grid">
-          {['Image', 'Item Details', 'Tags & Status', 'Price', 'Actions'].map((h, i) => (
-            <div key={h} style={{ ...S.label, color: C.onSurfaceVariant, textAlign: i === 4 ? 'right' : 'left' }}>{h}</div>
-          ))}
-        </div>
-
-        {/* Rows */}
+        {/* Cards */}
         {items.length === 0 ? (
           <div style={{ padding: '48px', textAlign: 'center', color: C.onSurfaceVariant }}>
             <span className="material-symbols-outlined" style={{ fontSize: '48px', display: 'block', marginBottom: '12px' }}>restaurant_menu</span>
             No menu items yet. Add your first item!
           </div>
         ) : (
-          <>
-            {/* Desktop rows */}
-            <div className="hidden md:block">
-              {items.map(item => (
-                <div
-                  key={`d-${item.id}`}
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: '80px 1fr 140px 100px 120px',
-                    gap: '16px', padding: '16px 24px',
-                    borderBottom: `1px solid ${C.surfaceContainerHigh}`,
-                    alignItems: 'center',
-                    opacity: item.isVisible ? 1 : 0.55,
-                  }}
-                >
-                  {/* Image */}
-                  <div style={{ width: '72px', height: '72px', borderRadius: '6px', overflow: 'hidden', border: `1px solid ${C.outline}`, background: C.surfaceContainerHigh, flexShrink: 0 }}>
+          <div style={{ padding: '24px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px' }}>
+            {items.map(item => (
+              <div
+                key={item.id}
+                style={{
+                  display: 'flex', flexDirection: 'column',
+                  background: C.surfaceContainer, border: `1px solid ${C.outline}`,
+                  borderRadius: '10px', overflow: 'hidden',
+                  opacity: item.isVisible ? 1 : 0.55,
+                  transition: 'box-shadow 200ms',
+                }}
+              >
+                {/* 4:3 Image */}
+                <div style={{ position: 'relative', width: '100%', paddingTop: '75%', flexShrink: 0 }}>
+                  <div style={{ position: 'absolute', inset: 0, background: C.surfaceContainerHigh, overflow: 'hidden' }}>
                     {item.imageUrl
-                      ? <img src={item.imageUrl} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}><span className="material-symbols-outlined" style={{ color: C.onSurfaceVariant, fontSize: '28px' }}>image_not_supported</span></div>
+                      ? <img
+                          src={getCloudinaryUrl(item.imageUrl)}
+                          alt={item.name}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                        />
+                      : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                          <span className="material-symbols-outlined" style={{ color: C.onSurfaceVariant, fontSize: '32px' }}>image_not_supported</span>
+                        </div>
                     }
+                    {/* Status badge overlay */}
+                    {!item.isVisible && (
+                      <span style={{ position: 'absolute', top: '8px', left: '8px', background: 'rgba(0,0,0,0.7)', color: C.onSurfaceVariant, borderRadius: '4px', padding: '2px 8px', fontSize: '9px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase' }}>Hidden</span>
+                    )}
+                    {item.isFeatured && (
+                      <span style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(212,175,55,0.9)', color: '#000', borderRadius: '4px', padding: '2px 8px', fontSize: '9px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase' }}>⭐ Featured</span>
+                    )}
                   </div>
+                </div>
 
-                  {/* Details */}
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                      <h4 style={{ ...S.headingSm, color: C.onSurface, margin: 0, fontSize: '15px' }}>{item.name}</h4>
-                      {!item.isVisible && <span style={{ ...S.label, background: C.surfaceContainer, color: C.onSurfaceVariant, padding: '2px 8px', borderRadius: '4px', fontSize: '9px' }}>Hidden</span>}
-                    </div>
-                    <p style={{ ...S.body, color: C.onSurfaceVariant, margin: 0, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any }}>{item.description}</p>
-                  </div>
+                {/* Fixed-height content */}
+                <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
+                  {/* Name — 1 line truncate */}
+                  <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: C.onSurface, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</h4>
 
-                  {/* Tags */}
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  {/* Description — 2 line clamp */}
+                  <p style={{ margin: 0, fontSize: '12px', color: C.onSurfaceVariant, lineHeight: '16px', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as any, minHeight: '32px' }}>
+                    {item.description}
+                  </p>
+
+                  {/* Tags - single row, truncate overflow */}
+                  <div style={{ display: 'flex', gap: '4px', overflow: 'hidden', minHeight: '20px', marginTop: '2px' }}>
                     {item.isVegan && <Tag>Vegan</Tag>}
                     {item.isVegetarian && <Tag>Veg</Tag>}
                     {item.isGlutenFree && <Tag>GF</Tag>}
-                    {item.isFeatured && <GoldTag>⭐ Featured</GoldTag>}
                   </div>
 
-                  {/* Price */}
-                  <div style={{ ...S.bodyLg, color: C.onSurface, fontWeight: 600 }}>₹{item.price?.toFixed(2)}</div>
-
-                  {/* Actions */}
-                  <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
-                    <IconBtn title="Edit" onClick={() => openEditModal(item)}>
-                      edit
-                    </IconBtn>
-                    <IconBtn title={item.isVisible ? 'Hide' : 'Show'} onClick={() => handleToggleVisibility(item.id, item.isVisible)}>
-                      {item.isVisible ? 'visibility_off' : 'visibility'}
-                    </IconBtn>
-                    <IconBtn title="Delete" onClick={() => handleDelete(item.id)} danger>
-                      delete
-                    </IconBtn>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Mobile rows */}
-            <div className="md:hidden">
-              {items.map(item => (
-                <div key={`m-${item.id}`} style={{ padding: '16px', borderBottom: `1px solid ${C.surfaceContainerHigh}`, opacity: item.isVisible ? 1 : 0.55 }}>
-                  <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                    <div style={{ width: '64px', height: '64px', borderRadius: '6px', overflow: 'hidden', border: `1px solid ${C.outline}`, flexShrink: 0, background: C.surfaceContainerHigh }}>
-                      {item.imageUrl
-                        ? <img src={item.imageUrl} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}><span className="material-symbols-outlined" style={{ color: C.onSurfaceVariant, fontSize: '24px' }}>image_not_supported</span></div>
-                      }
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 600, color: C.onSurface, marginBottom: '4px', fontSize: '15px' }}>{item.name}</div>
-                      <div style={{ color: C.onSurfaceVariant, fontSize: '12px', marginBottom: '8px' }}>{item.description}</div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ color: C.onSurface, fontWeight: 600 }}>₹{item.price?.toFixed(2)}</span>
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                          <button onClick={() => openEditModal(item)} style={{ background: 'none', border: 'none', color: C.onSurfaceVariant, cursor: 'pointer', padding: '4px', lineHeight: 0 }}>
-                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>edit</span>
-                          </button>
-                          <button onClick={() => handleToggleVisibility(item.id, item.isVisible)} style={{ background: 'none', border: 'none', color: C.onSurfaceVariant, cursor: 'pointer', padding: '4px', lineHeight: 0 }}>
-                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>{item.isVisible ? 'visibility_off' : 'visibility'}</span>
-                          </button>
-                          <button onClick={() => handleDelete(item.id)} style={{ background: 'none', border: 'none', color: C.error, cursor: 'pointer', padding: '4px', lineHeight: 0 }}>
-                            <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>delete</span>
-                          </button>
-                        </div>
-                      </div>
+                  {/* Price + actions row — always at bottom */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: '8px', borderTop: `1px solid ${C.outline}` }}>
+                    <span style={{ fontSize: '15px', fontWeight: 700, color: C.onSurface }}>₹{item.price?.toFixed(2)}</span>
+                    <div style={{ display: 'flex', gap: '2px' }}>
+                      <IconBtn title="Edit" onClick={() => openEditModal(item)}>edit</IconBtn>
+                      <IconBtn title={item.isVisible ? 'Hide' : 'Show'} onClick={() => handleToggleVisibility(item.id, item.isVisible)}>
+                        {item.isVisible ? 'visibility_off' : 'visibility'}
+                      </IconBtn>
+                      <IconBtn title="Delete" onClick={() => handleDelete(item.id)} danger>delete</IconBtn>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </>
+              </div>
+            ))}
+          </div>
         )}
 
         {/* Footer */}

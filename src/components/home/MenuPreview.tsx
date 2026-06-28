@@ -7,6 +7,7 @@ import SectionHeading from "@/components/SectionHeading";
 import Badge from "@/components/Badge";
 import { prisma } from "@/lib/prisma";
 import MobileScrollStack from "./MobileScrollStack";
+import { getCloudinaryUrl } from "@/lib/cloudinary";
 
 // REPLACE THESE WITH YOUR OWN IMAGE LINKS:
 const MENU_IMAGES = {
@@ -151,7 +152,7 @@ export default async function MenuPreview() {
                     }}
                   >
                     <Image
-                      src={item.imageUrl}
+                      src={getCloudinaryUrl(item.imageUrl)}
                       alt={item.name}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -199,6 +200,9 @@ export default async function MenuPreview() {
                         fontFamily: "var(--font-heading)",
                         fontSize: "1.1rem",
                         color: "var(--color-primary)",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
                       }}
                     >
                       {item.name}
@@ -220,6 +224,10 @@ export default async function MenuPreview() {
                       color: "var(--color-muted)",
                       lineHeight: 1.65,
                       fontWeight: 500,
+                      overflow: "hidden",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical" as const,
                     }}
                   >
                     {item.description}
