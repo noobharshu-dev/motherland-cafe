@@ -1,13 +1,16 @@
+import { Suspense } from "react";
 import { prisma } from "@/lib/prisma";
 import HeroSection from "@/components/home/HeroSection";
 import AboutSnippet from "@/components/home/AboutSnippet";
 import MenuPreview from "@/components/home/MenuPreview";
 import ReviewsSection from "@/components/home/ReviewsSection";
 import ReservationCTA from "@/components/home/ReservationCTA";
+import { ReviewsSkeleton, MenuPreviewSkeleton } from "@/components/ui/Skeletons";
 
 // Revalidate every 5 minutes — fresh enough, but served from cache
 export const revalidate = 300;
 
+// Intentional fallback — used when DB is unavailable or during build
 const FALLBACK_REVIEWS = [
   {
     id: "1",
@@ -35,9 +38,9 @@ const FALLBACK_REVIEWS = [
   },
 ];
 
-export default async function HomePage() {
+/** Async server component — fetches reviews, streams result under Suspense */
+async function ReviewsFetcher() {
   let reviews = FALLBACK_REVIEWS;
-
   try {
     const dbReviews = await prisma.review.findMany({
       where: { status: "published" },
@@ -46,15 +49,27 @@ export default async function HomePage() {
     });
     if (dbReviews.length > 0) reviews = dbReviews;
   } catch {
-    // No DB connection yet — use fallback data
+    // DB unavailable — intentional fallback data renders instead
   }
+  return <ReviewsSection reviews={reviews} />;
+}
 
+/** Async server component — fetches featured menu items, streams under Suspense */
+async function MenuPreviewFetcher() {
+  return <MenuPreview />;
+}
+
+export default function HomePage() {
   return (
     <>
       <HeroSection />
       <AboutSnippet />
-      <MenuPreview />
-      <ReviewsSection reviews={reviews} />
+      <Suspense fallback={<MenuPreviewSkeleton />}>
+        <MenuPreviewFetcher />
+      </Suspense>
+      <Suspense fallback={<ReviewsSkeleton />}>
+        <ReviewsFetcher />
+      </Suspense>
       <ReservationCTA />
     </>
   );

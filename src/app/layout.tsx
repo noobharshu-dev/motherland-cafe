@@ -26,6 +26,13 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_IN",
     siteName: "Motherland Cafe",
+    images: [{ url: "https://motherlandcafe.in/og-image.jpg", width: 1200, height: 630, alt: "Motherland Cafe" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Motherland Cafe — Escape the Noise. Sip Slowly.",
+    description: "A peaceful escape from the city's noise. Premium coffee, healthy food, and a calm work-friendly atmosphere in Kolkata.",
+    images: ["https://motherlandcafe.in/og-image.jpg"],
   },
   robots: {
     index: true,

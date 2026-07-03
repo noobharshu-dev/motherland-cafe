@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
   const [isUnlocked, setIsUnlocked] = useState(false);
@@ -135,10 +136,12 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
             <span className="material-symbols-outlined" style={{ fontSize: '22px' }}>refresh</span>
           </button>
           <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#2a2a2a', border: '1px solid #4d4635', overflow: 'hidden' }}>
-            <img
+            <Image
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5JGKNYd2RAE1hmYt-OlkqFPFgrw3tVCsTXE-LNVFvVMYlPTJ9HQ-h-xZ0Cj8JMkR1xQ7HoULJa_Iw4hgKz9S9wF2kYrGjFcqY93XGQWaocQg8kfEs99eHRDRnAPDWQLce4eXzd9_Nc56aQe9oBmgUCIzNShuueXY_rmieOyRQ4Tk3KkD-ZOCi9fiq9yXKEZlQMJM2YcbbGRl-xlW0_3f6cfWfQNh20mdtv0Hng8_BkeEgYJxXiINGKr9Fth-s7h6blZUlDFyP9g"
-              alt="Admin"
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              alt="Admin user avatar"
+              width={36}
+              height={36}
+              style={{ objectFit: 'cover' }}
             />
           </div>
         </div>

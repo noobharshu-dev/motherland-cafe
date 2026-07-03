@@ -3,6 +3,10 @@
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { Resend } from "resend";
+import { headers } from "next/headers";
+import { submissionLimiter, checkRateLimit } from "@/lib/ratelimit";
+import { sanitizeText } from "@/lib/sanitize";
+import { cafeConfig } from "@/config/cafe.config";
 
 const reservationSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -47,15 +51,25 @@ export async function createReservation(
   const data = parsed.data;
 
   try {
+    const headersList = await headers();
+    const ip = headersList.get("x-forwarded-for") ?? "anonymous";
+    const rateLimitResponse = await checkRateLimit(submissionLimiter, `reservation:${ip}`);
+    if (rateLimitResponse) {
+      return {
+        success: false,
+        message: "Too many requests. Please try again later.",
+      };
+    }
+
     await prisma.reservation.create({
       data: {
-        name: data.name,
-        phone: data.phone,
-        email: data.email,
+        name: sanitizeText(data.name),
+        phone: sanitizeText(data.phone),
+        email: sanitizeText(data.email),
         guests: data.guests,
         reservationDate: data.reservationDate,
         reservationTime: data.reservationTime,
-        notes: data.notes ?? "",
+        notes: sanitizeText(data.notes ?? ""),
         status: "pending",
       },
     });
@@ -65,19 +79,19 @@ export async function createReservation(
       try {
         const resend = new Resend(process.env.RESEND_API_KEY);
         await resend.emails.send({
-          from: process.env.RESEND_FROM_EMAIL || "reservations@motherlandcafe.in",
+          from: process.env.RESEND_FROM_EMAIL || cafeConfig.email.reservations,
           to: [data.email],
           bcc: process.env.RESEND_TO_EMAIL,
-          subject: `Reservation Confirmed — Motherland Cafe`,
+          subject: `Reservation Confirmed — ${cafeConfig.name}`,
           html: `
             <div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;color:#451A03;">
               <div style="background:#78350F;padding:2rem;border-radius:8px 8px 0 0;text-align:center;">
-                <h1 style="font-family:Georgia,serif;color:#FBBF24;font-size:1.75rem;margin:0;">Motherland Cafe</h1>
+                <h1 style="font-family:Georgia,serif;color:#FBBF24;font-size:1.75rem;margin:0;">${cafeConfig.name}</h1>
                 <p style="color:rgba(254,243,199,0.8);margin:0.5rem 0 0;font-size:0.85rem;letter-spacing:0.1em;text-transform:uppercase;">Reservation Confirmation</p>
               </div>
               <div style="background:#FEF3C7;padding:2rem;border-radius:0 0 8px 8px;border:1px solid #D97706;">
                 <p style="font-size:1rem;margin-bottom:1.5rem;">Dear <strong>${data.name}</strong>,</p>
-                <p style="margin-bottom:1.5rem;">Your table at Motherland Cafe has been reserved. We look forward to welcoming you!</p>
+                <p style="margin-bottom:1.5rem;">Your table at ${cafeConfig.name} has been reserved. We look forward to welcoming you!</p>
                 <table style="width:100%;border-collapse:collapse;margin-bottom:1.5rem;">
                   <tr style="border-bottom:1px solid rgba(120,53,15,0.15);">
                     <td style="padding:0.6rem 0;font-size:0.85rem;color:#92400E;font-weight:600;">Date</td>
@@ -93,10 +107,10 @@ export async function createReservation(
                   </tr>
                 </table>
                 <p style="font-size:0.85rem;color:#92400E;margin-bottom:0.5rem;"><strong>Address:</strong></p>
-                <p style="font-size:0.85rem;color:#92400E;">A/3 Kyd Street, Chowringhee Mansion, Kolkata 700016</p>
-                <p style="font-size:0.85rem;color:#92400E;margin-top:0.5rem;"><strong>Phone:</strong> 097480 77790</p>
+                <p style="font-size:0.85rem;color:#92400E;">${cafeConfig.address}, ${cafeConfig.city} ${cafeConfig.postalCode}</p>
+                <p style="font-size:0.85rem;color:#92400E;margin-top:0.5rem;"><strong>Phone:</strong> ${cafeConfig.phone}</p>
                 <hr style="margin:1.5rem 0;border:none;border-top:1px solid rgba(120,53,15,0.15);">
-                <p style="font-size:0.8rem;color:rgba(120,53,15,0.6);text-align:center;">Escape the Noise. Sip Slowly.</p>
+                <p style="font-size:0.8rem;color:rgba(120,53,15,0.6);text-align:center;">${cafeConfig.tagline}</p>
               </div>
             </div>
           `,

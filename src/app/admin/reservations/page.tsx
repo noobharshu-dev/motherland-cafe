@@ -114,6 +114,7 @@ export default function ReservationsManagement() {
                       )}
                       {res.status !== 'cancelled' && (
                         <button
+                          aria-label="Cancel reservation"
                           onClick={() => handleStatus(res.id, 'cancelled')}
                           style={{ padding: '6px', background: 'none', border: 'none', cursor: 'pointer', color: C.error, lineHeight: 0 }}
                           title="Cancel"

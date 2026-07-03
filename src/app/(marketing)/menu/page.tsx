@@ -9,6 +9,18 @@ export const metadata: Metadata = {
   title: "Menu",
   description:
     "Explore Motherland Cafe's full menu — artisanal coffee, specialty beverages, healthy mains, and gluten-free options in Kolkata.",
+  openGraph: {
+    title: "Menu",
+    description: "Explore Motherland Cafe",
+    url: "/menu",
+    images: [{ url: "https://motherlandcafe.in/og-image.jpg", width: 1200, height: 630, alt: "Menu" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Menu",
+    description: "Explore Motherland Cafe",
+    images: ["https://motherlandcafe.in/og-image.jpg"],
+  },
 };
 
 const FALLBACK_CATEGORIES = [

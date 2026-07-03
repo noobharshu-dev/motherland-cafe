@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Home, Utensils, Image as ImageIcon, Info, Phone } from "lucide-react";
-import { motion } from "framer-motion";
+
 import Logo from "@/components/Logo";
 import Dock from "@/components/Dock";
 

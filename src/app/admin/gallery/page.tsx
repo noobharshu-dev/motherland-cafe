@@ -45,6 +45,7 @@ export default function GalleryManagement() {
           <p style={{ fontSize: '14px', color: C.onSurfaceVariant, margin: 0 }}>Manage cafe photos and media.</p>
         </div>
         <button 
+          aria-label="Add new photo"
           onClick={() => setShowUploadModal(true)}
           style={{
           display: 'flex', alignItems: 'center', gap: '8px',
@@ -88,6 +89,7 @@ export default function GalleryManagement() {
                   onMouseLeave={e => (e.currentTarget.style.opacity = '0')}
                 >
                   <button
+                    aria-label="Delete photo"
                     onClick={() => handleDelete(img.id)}
                     style={{
                       width: '44px', height: '44px', borderRadius: '50%',
@@ -180,19 +182,19 @@ function UploadModal({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
       <div style={{ width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', background: '#1e1e1e', border: '1px solid #2c2c2c', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 8px 24px rgba(0,0,0,0.5)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '24px', borderBottom: '1px solid #2c2c2c', flexShrink: 0 }}>
           <h2 style={{ margin: 0, fontSize: '24px', fontWeight: 600, fontFamily: "'Playfair Display', serif", color: '#e5e2e1' }}>Upload Image</h2>
-          <button onClick={onClose} type="button" style={{ background: 'none', border: 'none', color: '#d0c5af', cursor: 'pointer' }}>
+          <button aria-label="Close modal" onClick={onClose} type="button" style={{ background: 'none', border: 'none', color: '#d0c5af', cursor: 'pointer' }}>
             <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>close</span>
           </button>
         </div>
 
         <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Image File</label>
+            <label htmlFor="image-file" style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Image File</label>
             <div 
               onClick={() => fileInputRef.current?.click()}
               style={{ width: '100%', height: '180px', border: '2px dashed #4d4635', borderRadius: '8px', background: '#121212', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', overflow: 'hidden' }}
             >
-              <input type="file" ref={fileInputRef} onChange={handleUpload} accept="image/*" style={{ display: 'none' }} />
+              <input id="image-file" type="file" ref={fileInputRef} onChange={handleUpload} accept="image/*" style={{ display: 'none' }} />
               {uploading ? (
                 <div style={{ color: '#d4af37' }}>Uploading...</div>
               ) : formData.imageUrl ? (
@@ -208,17 +210,17 @@ function UploadModal({ onClose, onSaved }: { onClose: () => void; onSaved: () =>
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Title</label>
+            <label htmlFor="title" style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Title</label>
             <input 
-              required type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})}
+              id="title" required type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})}
               placeholder="e.g., Evening Interior"
               style={{ width: '100%', background: '#121212', border: '1px solid #2c2c2c', borderRadius: '4px', padding: '12px', color: '#e5e2e1', fontSize: '16px', outline: 'none' }}
             />
           </div>
           <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Category</label>
+            <label htmlFor="category" style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Category</label>
             <select 
-              required value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}
+              id="category" required value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}
               style={{ width: '100%', background: '#121212', border: '1px solid #2c2c2c', borderRadius: '4px', padding: '12px', color: '#e5e2e1', fontSize: '16px', outline: 'none', cursor: 'pointer', appearance: 'none' }}
             >
               <option value="general">General</option>

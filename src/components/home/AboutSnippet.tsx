@@ -4,6 +4,7 @@ import { ArrowRight, Leaf, Wifi, Coffee } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import SectionHeading from "@/components/SectionHeading";
 import SpotlightCard from "@/components/SpotlightCard";
+import { cafeConfig } from "@/config/cafe.config";
 
 // REPLACE THIS WITH YOUR OWN IMAGE LINK:
 const ABOUT_IMAGE_URL = "/images/about_corner.png";
@@ -51,7 +52,7 @@ export default function AboutSnippet() {
             >
               <Image
                 src={ABOUT_IMAGE_URL}
-                alt="Motherland Cafe interior — a calm workspace"
+                alt={`${cafeConfig.name} interior — a calm workspace`}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover"
@@ -72,10 +73,10 @@ export default function AboutSnippet() {
                 }}
               >
                 <p style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", color: "var(--color-primary)", fontWeight: 700 }}>
-                  Chowringhee, Kolkata
+                  {cafeConfig.address.split(",")[1]?.trim() || "Chowringhee"}, {cafeConfig.city}
                 </p>
                 <p style={{ fontSize: "0.8rem", color: "var(--color-muted)", marginTop: "0.2rem" }}>
-                  Open 8 AM – 9:30 PM, every day
+                  {cafeConfig.openingHoursDisplay}
                 </p>
               </div>
             </div>
@@ -98,7 +99,7 @@ export default function AboutSnippet() {
                 marginBottom: "2rem",
               }}
             >
-              Motherland Cafe is where you can sit, sip a cup of coffee, eat delicious food, network and enjoy your time while engaging in a good conversation! We have our own bakery that supplies us with amazing breads and desserts. All our pastas are hand made every morning and we use tomatoes imported from Italy for our sauces. Come experience the best of European food in the heart of Kolkata.
+              {cafeConfig.name} is where you can sit, sip a cup of coffee, eat delicious food, network and enjoy your time while engaging in a good conversation! We have our own bakery that supplies us with amazing breads and desserts. All our pastas are hand made every morning and we use tomatoes imported from Italy for our sauces. Come experience the best of European food in the heart of {cafeConfig.city}.
             </p>
 
             {/* Values */}

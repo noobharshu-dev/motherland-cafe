@@ -3,10 +3,23 @@ import ReservationForm from "./ReservationForm";
 import AnimatedSection from "@/components/AnimatedSection";
 import { Clock, MapPin, Phone } from "lucide-react";
 import SpotlightCard from "@/components/SpotlightCard";
+import { cafeConfig } from "@/config/cafe.config";
 
 export const metadata: Metadata = {
   title: "Reserve a Table",
-  description: "Book a table at Motherland Cafe, Kolkata. Reserve your quiet corner for coffee, work, or meaningful conversations.",
+  description: `Book a table at Motherland Cafe, Kolkata. Reserve your quiet corner for coffee, work, or meaningful conversations.`, // Ideally this should be server rendered dynamically if we want cafeConfig here, but cafeConfig is not exported in a way that breaks server components, wait, cafeConfig is just an object.
+  openGraph: {
+    title: "Reserve a Table",
+    description: `Book a table at Motherland Cafe, Kolkata. Reserve your quiet corner for coffee, work, or meaningful conversations.`,
+    url: "/reservations",
+    images: [{ url: "https://motherlandcafe.in/og-image.jpg", width: 1200, height: 630, alt: "Reserve a Table" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Reserve a Table",
+    description: "Book a table at Motherland Cafe, Kolkata. Reserve your quiet corner for coffee, work, or meaningful conversations.",
+    images: ["https://motherlandcafe.in/og-image.jpg"],
+  },
 };
 
 export default function ReservationsPage() {
@@ -46,8 +59,8 @@ export default function ReservationsPage() {
 
                 {[
                   { icon: Clock, title: "Walk-ins Welcome", desc: "We accept walk-ins subject to availability, but reservations guarantee your spot." },
-                  { icon: MapPin, title: "Finding Us", desc: "A/3 Kyd Street, Chowringhee Mansion, Kolkata 700016." },
-                  { icon: Phone, title: "Need Help?", desc: "Call us at 097480 77790 and we'll assist with any special requirements." },
+                  { icon: MapPin, title: "Finding Us", desc: `${cafeConfig.address}, ${cafeConfig.city} ${cafeConfig.postalCode}.` },
+                  { icon: Phone, title: "Need Help?", desc: `Call us at ${cafeConfig.phone} and we'll assist with any special requirements.` },
                 ].map(({ icon: Icon, title, desc }) => (
                   <SpotlightCard key={title} className="card" spotlightColor="rgba(212, 175, 55, 0.12)" style={{ padding: "1.5rem", display: "flex", gap: "1rem" }}>
                     <div
@@ -78,7 +91,7 @@ export default function ReservationsPage() {
                     Opening Hours
                   </p>
                   <p style={{ fontFamily: "var(--font-heading)", fontSize: "1.25rem", color: "var(--color-cta)", fontWeight: 700 }}>
-                    8:00 AM – 9:30 PM
+                    {cafeConfig.openingHoursDisplay.split('•')[1]?.trim() || cafeConfig.openingHoursDisplay}
                   </p>
                   <p style={{ fontSize: "0.8rem", color: "var(--color-muted)", marginTop: "0.3rem" }}>
                     Every day of the week, all year round

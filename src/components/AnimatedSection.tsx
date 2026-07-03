@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { LazyMotion, domAnimation, m, useInView } from "framer-motion";
 
 interface AnimatedSectionProps {
   children: React.ReactNode;
@@ -20,15 +20,19 @@ export default function AnimatedSection({
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 30, scale: 0.95 }}
-      animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 30, scale: 0.95 }}
-      transition={{ type: "spring" as const, stiffness: 80, damping: 25, mass: 1, delay }}
-      className={className}
-      style={style}
-    >
-      {children}
-    </motion.div>
+    // LazyMotion with domAnimation lazy-loads the animation feature set (~18kb vs ~140kb)
+    // Only loaded when the component is mounted — viewport-triggered via useInView
+    <LazyMotion features={domAnimation} strict>
+      <m.div
+        ref={ref}
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 30, scale: 0.95 }}
+        transition={{ type: "spring" as const, stiffness: 80, damping: 25, mass: 1, delay }}
+        className={className}
+        style={style}
+      >
+        {children}
+      </m.div>
+    </LazyMotion>
   );
 }

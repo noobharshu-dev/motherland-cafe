@@ -9,6 +9,18 @@ export const metadata: Metadata = {
   title: "Gallery",
   description:
     "A visual journey through Motherland Cafe — our space, drinks, and food in Kolkata.",
+  openGraph: {
+    title: "Gallery",
+    description: "A visual journey through Motherland Cafe — our space, drinks, and food in Kolkata.",
+    url: "/gallery",
+    images: [{ url: "https://motherlandcafe.in/og-image.jpg", width: 1200, height: 630, alt: "Gallery" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Gallery",
+    description: "A visual journey through Motherland Cafe — our space, drinks, and food in Kolkata.",
+    images: ["https://motherlandcafe.in/og-image.jpg"],
+  },
 };
 
 const HEIGHTS = [400, 320, 480, 360, 440, 300, 420, 380, 460];

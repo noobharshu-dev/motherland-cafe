@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MapPin, Phone, Clock, Instagram } from "lucide-react";
 import WhatsAppIcon from "./WhatsAppIcon";
+import { cafeConfig } from "@/config/cafe.config";
 
 export default function Footer() {
   return (
@@ -32,7 +33,7 @@ export default function Footer() {
                 color: "var(--color-cta)",
               }}
             >
-              Motherland
+              {cafeConfig.name.split(" ")[0]}
             </h2>
             <p
               style={{
@@ -46,7 +47,7 @@ export default function Footer() {
             </p>
             <div style={{ display: "flex", gap: "1rem", marginTop: "1.25rem" }}>
               <a
-                href="https://www.instagram.com/motherland.studios.cafe"
+                href={cafeConfig.socials.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
@@ -55,7 +56,7 @@ export default function Footer() {
                 <Instagram size={20} />
               </a>
               <a
-                href="https://wa.me/919748077790"
+                href={cafeConfig.socials.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
@@ -86,8 +87,8 @@ export default function Footer() {
             </h3>
             <nav style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
               {[
-                { href: "https://www.zomato.com/kolkata/motherland-studio-cafe-chowringhee", label: "Order on Zomato" },
-                { href: "https://www.swiggy.com/restaurants/827631/dineout", label: "Order on Swiggy" },
+                { href: cafeConfig.socials.zomato, label: "Order on Zomato" },
+                { href: cafeConfig.socials.swiggy, label: "Order on Swiggy" },
               ].map((link) => (
                 <a
                   key={link.href}
@@ -167,23 +168,23 @@ export default function Footer() {
               <div style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start" }}>
                 <MapPin size={16} style={{ color: "var(--color-cta)", marginTop: "2px", flexShrink: 0 }} />
                 <p style={{ fontSize: "0.875rem", opacity: 0.8, lineHeight: 1.6 }}>
-                  A/3 Kyd Street,<br />
-                  Chowringhee Mansion,<br />
-                  Kolkata 700016
+                  {cafeConfig.address.split(",")[0]},<br />
+                  {cafeConfig.address.split(",")[1]?.trim() || "Chowringhee Mansion"},<br />
+                  {cafeConfig.city} {cafeConfig.postalCode}
                 </p>
               </div>
               <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
                 <Phone size={16} style={{ color: "var(--color-cta)", flexShrink: 0 }} />
                 <a
-                  href="tel:09748077790"
+                  href={`tel:${cafeConfig.phone.replace(/\s+/g, "")}`}
                   style={{ fontSize: "0.875rem", opacity: 0.8, textDecoration: "none", color: "inherit", transition: "opacity 200ms" }}
                 >
-                  097480 77790
+                  {cafeConfig.phone}
                 </a>
               </div>
               <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
                 <Clock size={16} style={{ color: "var(--color-cta)", flexShrink: 0 }} />
-                <p style={{ fontSize: "0.875rem", opacity: 0.8 }}>Every Day: 8:00 AM – 9:30 PM</p>
+                <p style={{ fontSize: "0.875rem", opacity: 0.8 }}>{cafeConfig.openingHoursDisplay}</p>
               </div>
             </div>
           </div>
@@ -202,10 +203,10 @@ export default function Footer() {
           }}
         >
           <p style={{ fontSize: "0.8rem", opacity: 0.5 }}>
-            © {new Date().getFullYear()} Motherland Cafe. All rights reserved.
+            © {new Date().getFullYear()} {cafeConfig.name}. All rights reserved.
           </p>
           <p style={{ fontSize: "0.8rem", opacity: 0.5 }}>
-            Coffee, Community, Calm.
+            {cafeConfig.tagline}
           </p>
         </div>
       </div>

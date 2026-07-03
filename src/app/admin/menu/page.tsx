@@ -314,13 +314,13 @@ function CategoryModal({ onClose, onSaved }: { onClose: () => void; onSaved: () 
       <div style={{ width: '100%', maxWidth: '400px', background: '#1e1e1e', border: '1px solid #2c2c2c', borderRadius: '8px', overflow: 'hidden' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '24px', borderBottom: '1px solid #2c2c2c' }}>
           <h2 style={{ margin: 0, fontSize: '24px', fontWeight: 600, fontFamily: "'Playfair Display', serif", color: '#e5e2e1' }}>Add Category</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#d0c5af', cursor: 'pointer' }}><span className="material-symbols-outlined">close</span></button>
+          <button aria-label="Close modal" onClick={onClose} style={{ background: 'none', border: 'none', color: '#d0c5af', cursor: 'pointer' }}><span className="material-symbols-outlined">close</span></button>
         </div>
         <form onSubmit={handleSubmit} style={{ padding: '24px' }}>
           <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Category Name</label>
+            <label htmlFor="category-name" style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Category Name</label>
             <input 
-              required type="text" value={name} onChange={e => setName(e.target.value)}
+              id="category-name" required type="text" value={name} onChange={e => setName(e.target.value)}
               placeholder="e.g., Brunch Plates"
               style={{ width: '100%', background: '#121212', border: '1px solid #2c2c2c', borderRadius: '4px', padding: '12px', color: '#e5e2e1', fontSize: '16px', outline: 'none' }}
             />
@@ -437,7 +437,7 @@ function ItemModal({ onClose, onSaved, categories, editingItem }: { onClose: () 
           <h2 style={{ margin: 0, fontSize: '24px', fontWeight: 600, fontFamily: "'Playfair Display', serif", color: '#e5e2e1' }}>
             {editingItem ? 'Edit Menu Item' : 'Add Menu Item'}
           </h2>
-          <button onClick={onClose} type="button" style={{ background: 'none', border: 'none', color: '#d0c5af', cursor: 'pointer' }}>
+          <button aria-label="Close modal" onClick={onClose} type="button" style={{ background: 'none', border: 'none', color: '#d0c5af', cursor: 'pointer' }}>
             <span className="material-symbols-outlined" style={{ fontSize: '24px' }}>close</span>
           </button>
         </div>
@@ -457,13 +457,13 @@ function ItemModal({ onClose, onSaved, categories, editingItem }: { onClose: () 
           
           {/* Image Upload */}
           <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Item Image</label>
+            <label htmlFor="item-image" style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Item Image</label>
             <div style={{ position: 'relative', width: '100%', paddingTop: '75%' /* 4:3 ratio */ }}>
               <div 
                 onClick={() => fileInputRef.current?.click()}
                 style={{ position: 'absolute', inset: 0, border: '2px dashed #4d4635', borderRadius: '8px', background: '#121212', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', overflow: 'hidden' }}
               >
-                <input type="file" ref={fileInputRef} onChange={handleUpload} accept="image/*" style={{ display: 'none' }} />
+                <input id="item-image" type="file" ref={fileInputRef} onChange={handleUpload} accept="image/*" style={{ display: 'none' }} />
                 {uploading ? (
                   <div style={{ color: '#d4af37' }}>Uploading...</div>
                 ) : formData.imageUrl ? (
@@ -482,19 +482,19 @@ function ItemModal({ onClose, onSaved, categories, editingItem }: { onClose: () 
           {/* Name & Price */}
           <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Item Name</label>
+              <label htmlFor="item-name" style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Item Name</label>
               <input 
-                required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})}
+                id="item-name" required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})}
                 placeholder="e.g., Artisan Pour Over"
                 style={{ width: '100%', background: '#121212', border: '1px solid #2c2c2c', borderRadius: '4px', padding: '12px', color: '#e5e2e1', fontSize: '16px', outline: 'none' }}
               />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Price (₹)</label>
+              <label htmlFor="item-price" style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Price (₹)</label>
               <div style={{ position: 'relative' }}>
                 <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#d0c5af' }}>₹</span>
                 <input 
-                  required type="number" step="0.01" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})}
+                  id="item-price" required type="number" step="0.01" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})}
                   placeholder="0.00"
                   style={{ width: '100%', background: '#121212', border: '1px solid #2c2c2c', borderRadius: '4px', padding: '12px 12px 12px 28px', color: '#e5e2e1', fontSize: '16px', outline: 'none' }}
                 />
@@ -505,9 +505,9 @@ function ItemModal({ onClose, onSaved, categories, editingItem }: { onClose: () 
           {/* Category & Tags */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', flexWrap: 'wrap' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Category</label>
+              <label htmlFor="item-category" style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Category</label>
               <select 
-                required value={formData.categoryId} onChange={e => setFormData({...formData, categoryId: e.target.value})}
+                id="item-category" required value={formData.categoryId} onChange={e => setFormData({...formData, categoryId: e.target.value})}
                 style={{ width: '100%', background: '#121212', border: '1px solid #2c2c2c', borderRadius: '4px', padding: '12px', color: '#e5e2e1', fontSize: '16px', outline: 'none', cursor: 'pointer' }}
               >
                 <option value="" disabled>Select Category</option>
@@ -526,9 +526,9 @@ function ItemModal({ onClose, onSaved, categories, editingItem }: { onClose: () 
 
           {/* Description */}
           <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Description</label>
+            <label htmlFor="item-description" style={{ display: 'block', fontSize: '12px', fontWeight: 600, letterSpacing: '0.05em', color: '#d0c5af', marginBottom: '8px' }}>Description</label>
             <textarea 
-              rows={3} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})}
+              id="item-description" rows={3} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})}
               placeholder="Describe the flavor profile..."
               style={{ width: '100%', background: '#121212', border: '1px solid #2c2c2c', borderRadius: '4px', padding: '12px', color: '#e5e2e1', fontSize: '16px', outline: 'none', resize: 'none' }}
             />

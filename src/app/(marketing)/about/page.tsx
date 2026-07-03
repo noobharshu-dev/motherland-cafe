@@ -9,6 +9,18 @@ import SpotlightCard from "@/components/SpotlightCard";
 export const metadata: Metadata = {
   title: "About Us",
   description: "Learn the story behind Motherland Cafe — Kolkata's peaceful retreat for premium coffee, healthy food, and meaningful conversations.",
+  openGraph: {
+    title: "About Us",
+    description: "Learn the story behind Motherland Cafe — Kolkata",
+    url: "/about",
+    images: [{ url: "https://motherlandcafe.in/og-image.jpg", width: 1200, height: 630, alt: "About Us" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Us",
+    description: "Learn the story behind Motherland Cafe — Kolkata",
+    images: ["https://motherlandcafe.in/og-image.jpg"],
+  },
 };
 
 const VALUES = [

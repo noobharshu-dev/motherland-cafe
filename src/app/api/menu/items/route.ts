@@ -1,63 +1,78 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
+import { sanitizeText } from '@/lib/sanitize';
+
+const menuItemSchema = z.object({
+  categoryId: z.string().min(1, 'categoryId is required'),
+  name: z.string().min(1, 'name is required').max(200),
+  description: z.string().max(1000).optional().default(''),
+  price: z.number().min(0, 'price must be non-negative'),
+  imageUrl: z.string().url('imageUrl must be a valid URL').optional().default(''),
+  isVegetarian: z.boolean().optional().default(false),
+  isVegan: z.boolean().optional().default(false),
+  isGlutenFree: z.boolean().optional().default(false),
+  isFeatured: z.boolean().optional().default(false),
+  isVisible: z.boolean().optional().default(true),
+});
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const categoryId = searchParams.get('categoryId');
-  
+
   try {
     const items = await prisma.menuItem.findMany({
       where: categoryId ? { categoryId } : undefined,
       include: { category: true },
     });
     return NextResponse.json(items);
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json({ error: 'Failed to fetch items' }, { status: 500 });
   }
 }
 
 export async function POST(req: Request) {
   try {
-    const data = await req.json();
-
-    // Validate required fields
-    if (!data.categoryId || typeof data.categoryId !== 'string' || data.categoryId.trim() === '') {
-      return NextResponse.json({ error: 'categoryId is required' }, { status: 400 });
-    }
-    if (!data.name || typeof data.name !== 'string' || data.name.trim() === '') {
-      return NextResponse.json({ error: 'name is required' }, { status: 400 });
-    }
-    const price = parseFloat(data.price);
-    if (isNaN(price)) {
-      return NextResponse.json({ error: 'price must be a valid number' }, { status: 400 });
+    // Parse body
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
     }
 
+    // Validate with Zod
+    const parsed = menuItemSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.errors[0].message },
+        { status: 400 }
+      );
+    }
+
+    const data = parsed.data;
     const item = await prisma.menuItem.create({
       data: {
-        categoryId: data.categoryId.trim(),
-        name: data.name.trim(),
-        description: (data.description || '').trim(),
-        price,
-        imageUrl: data.imageUrl || '',
-        isVegetarian: data.isVegetarian || false,
-        isVegan: data.isVegan || false,
-        isGlutenFree: data.isGlutenFree || false,
-        isFeatured: data.isFeatured || false,
-        isVisible: data.isVisible !== false,
-      }
+        categoryId: data.categoryId,
+        name: sanitizeText(data.name),
+        description: sanitizeText(data.description ?? ''),
+        price: data.price,
+        imageUrl: data.imageUrl ?? '',
+        isVegetarian: data.isVegetarian ?? false,
+        isVegan: data.isVegan ?? false,
+        isGlutenFree: data.isGlutenFree ?? false,
+        isFeatured: data.isFeatured ?? false,
+        isVisible: data.isVisible ?? true,
+      },
     });
-    
+
     // Invalidate public caches so the new item shows up immediately
     revalidatePath('/menu');
     revalidatePath('/');
-    
-    return NextResponse.json(item);
-  } catch (error: any) {
-    console.error('[POST /api/menu/items]', error?.message ?? error);
-    return NextResponse.json(
-      { error: 'Failed to create item', detail: error?.message ?? String(error) },
-      { status: 500 }
-    );
+
+    return NextResponse.json(item, { status: 201 });
+  } catch (_error) {
+    return NextResponse.json({ error: 'Failed to create menu item' }, { status: 500 });
   }
 }

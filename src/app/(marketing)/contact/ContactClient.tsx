@@ -5,36 +5,37 @@ import AnimatedSection from "@/components/AnimatedSection";
 import SectionHeading from "@/components/SectionHeading";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
 import SpotlightCard from "@/components/SpotlightCard";
+import { cafeConfig } from "@/config/cafe.config";
 
 const INFO_CARDS = [
   {
     icon: Phone,
     title: "Call Us",
-    links: [{ label: "+91 97480 77790", href: "tel:+919748077790" }],
+    links: [{ label: cafeConfig.phone, href: `tel:${cafeConfig.phone.replace(/\s+/g, "")}` }],
   },
   {
     icon: WhatsAppIcon,
     title: "Connect & Order",
     links: [
-      { label: "Instagram", href: "https://instagram.com/motherland.studios.cafe" },
-      { label: "WhatsApp", href: "https://wa.me/919748077790" },
-      { label: "Order on Zomato", href: "https://www.zomato.com/kolkata/motherland-studio-cafe-chowringhee" },
-      { label: "Order on Swiggy", href: "https://www.swiggy.com/restaurants/827631/dineout" },
+      { label: "Instagram", href: cafeConfig.socials.instagram },
+      { label: "WhatsApp", href: cafeConfig.socials.whatsapp },
+      { label: "Order on Zomato", href: cafeConfig.socials.zomato },
+      { label: "Order on Swiggy", href: cafeConfig.socials.swiggy },
     ],
   },
   {
     icon: Mail,
     title: "Email",
     links: [
-      { label: "reservations@motherlandcafe.in", href: "mailto:reservations@motherlandcafe.in" },
-      { label: "hello@motherlandcafe.in", href: "mailto:hello@motherlandcafe.in" }
+      { label: cafeConfig.email.reservations, href: `mailto:${cafeConfig.email.reservations}` },
+      { label: cafeConfig.email.hello, href: `mailto:${cafeConfig.email.hello}` }
     ],
   },
   {
     icon: MapPin,
     title: "Find Us",
     links: [
-      { label: "A/3 Kyd Street, Chowringhee Mansion, Kolkata", href: "https://maps.google.com/?q=Chowringhee+Mansion+Kolkata" }
+      { label: `${cafeConfig.address}, ${cafeConfig.city}`, href: cafeConfig.googleMapsUrl }
     ],
   },
 ];
@@ -98,8 +99,8 @@ export default function ContactClient() {
                 lineHeight: 1.8,
               }}
             >
-              We&apos;re tucked inside Chowringhee Mansion on Kyd Street in the
-              heart of Kolkata. Come in, sit down, and let the day slow down.
+              We&apos;re tucked inside {cafeConfig.address.split(",")[1]?.trim() || "Chowringhee Mansion"} on {cafeConfig.address.split(",")[0]} in the
+              heart of {cafeConfig.city}. Come in, sit down, and let the day slow down.
             </p>
 
             {/* Opening Hours Banner */}
@@ -123,7 +124,7 @@ export default function ContactClient() {
                   Opening Hours
                 </span>
                 <span style={{ fontFamily: "var(--font-heading)", fontSize: "1.1rem", color: "var(--color-primary)", fontWeight: 600 }}>
-                  Every Day • 8:00 AM – 9:30 PM
+                  {cafeConfig.openingHoursDisplay}
                 </span>
               </div>
             </div>
@@ -208,7 +209,7 @@ export default function ContactClient() {
           <AnimatedSection delay={0.2}>
             <SectionHeading
               eyebrow="Location"
-              title="Chowringhee Mansion, Kolkata"
+              title={`${cafeConfig.address.split(",")[1]?.trim() || "Chowringhee Mansion"}, ${cafeConfig.city}`}
             />
             <div
               style={{
@@ -229,7 +230,7 @@ export default function ContactClient() {
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                title="Motherland Cafe Location — Chowringhee Mansion, Kolkata"
+                title={`${cafeConfig.name} Location — ${cafeConfig.address.split(",")[1]?.trim() || "Chowringhee Mansion"}, ${cafeConfig.city}`}
               />
             </div>
           </AnimatedSection>

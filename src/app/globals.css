@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@500;600;700&display=swap');
 
 @import "tailwindcss";
@@ -387,4 +387,32 @@ a:not(.btn-primary):not(.btn-outline):hover {
   transform-origin: top center;
   transition: transform 0.3s ease;
   will-change: transform;
+}
+
+/* ── Accessibility ────────────────────────────────────────────── */
+/* Ensure all interactive elements have visible focus rings */
+*:focus-visible {
+  outline: 2px solid var(--color-cta);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* Ensure mobile touch targets are at least 44px (iOS HIG / WCAG) */
+@media (max-width: 768px) {
+  button, 
+  a, 
+  input, 
+  select, 
+  textarea,
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Reset min-height for inline links so they don't break text flow */
+  p a, 
+  span a {
+    min-height: auto;
+    min-width: auto;
+  }
 }

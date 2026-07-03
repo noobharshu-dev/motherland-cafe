@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Calendar } from "lucide-react";
+import { cafeConfig } from "@/config/cafe.config";
 
 // REPLACE THIS WITH YOUR OWN IMAGE LINK:
 const HERO_IMAGE_URL = "/images/hero_bg.png";
@@ -69,6 +70,7 @@ export default function HeroSection() {
   }, []);
 
   return (
+    <LazyMotion features={domAnimation} strict>
     <section
       style={{
         position: "relative",
@@ -80,7 +82,7 @@ export default function HeroSection() {
       }}
     >
       {/* Smooth Background Entry Image */}
-      <motion.div 
+      <m.div 
         style={{ position: "absolute", inset: -50, zIndex: 0 }}
         initial={{ scale: 1.05, opacity: 0.5 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -104,9 +106,9 @@ export default function HeroSection() {
               "linear-gradient(120deg, rgba(20, 16, 13, 0.98) 0%, rgba(20, 16, 13, 0.92) 50%, rgba(20, 16, 13, 0.6) 100%)",
           }}
         />
-      </motion.div>
+      </m.div>
 
-      <motion.div 
+      <m.div 
         className="container" 
         style={{ position: "relative", zIndex: 1, paddingTop: "7rem", paddingBottom: "5rem" }}
         variants={containerVariants}
@@ -115,7 +117,7 @@ export default function HeroSection() {
       >
         <div style={{ maxWidth: "820px" }}>
           {/* Eyebrow */}
-          <motion.div
+          <m.div
             variants={itemVariants}
             style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.5rem" }}
           >
@@ -130,12 +132,12 @@ export default function HeroSection() {
                 color: "var(--color-secondary)",
               }}
             >
-              Kolkata&apos;s Hidden Cafe Retreat
+              {cafeConfig.city}&apos;s Hidden Cafe Retreat
             </span>
-          </motion.div>
+          </m.div>
 
           {/* Display heading */}
-          <motion.h1
+          <m.h1
             variants={itemVariants}
             className="heading-display"
             style={{ marginBottom: "1.75rem" }}
@@ -147,10 +149,10 @@ export default function HeroSection() {
             </span>
             <br />
             Sip Slowly.
-          </motion.h1>
+          </m.h1>
 
           {/* Subtitle */}
-          <motion.p
+          <m.p
             variants={itemVariants}
             style={{
               fontFamily: "var(--font-body)",
@@ -163,11 +165,11 @@ export default function HeroSection() {
             }}
           >
             Artisanal coffee, nourishing food, gluten-free options, and a calm
-            work-friendly atmosphere in the heart of Kolkata.
-          </motion.p>
+            work-friendly atmosphere in the heart of {cafeConfig.city}.
+          </m.p>
 
           {/* CTAs */}
-          <motion.div
+          <m.div
             variants={itemVariants}
             style={{ display: "flex", flexWrap: "wrap", gap: "1rem", alignItems: "center" }}
           >
@@ -179,10 +181,10 @@ export default function HeroSection() {
               <Calendar size={16} />
               Reserve a Table
             </Link>
-          </motion.div>
+          </m.div>
 
           {/* Stats */}
-          <motion.div
+          <m.div
             variants={itemVariants}
             style={{
               display: "flex",
@@ -225,12 +227,12 @@ export default function HeroSection() {
                 </p>
               </div>
             ))}
-          </motion.div>
+          </m.div>
         </div>
-      </motion.div>
+      </m.div>
 
       {/* Floating hours badge */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, x: 30, scale: 0.9 }}
         animate={{ opacity: 1, x: 0, scale: 1 }}
         transition={{ type: "spring", stiffness: 100, damping: 20, mass: 1, delay: 0.8 }}
@@ -260,10 +262,10 @@ export default function HeroSection() {
           {mounted ? (isOpen ? "Open Now" : "Closed Now") : "Open Today"}
         </span>
         <span style={{ fontFamily: "var(--font-heading)", fontSize: "1rem", fontWeight: 700, color: "var(--color-cta)" }}>
-          8:00 AM – 9:30 PM
+          {cafeConfig.openingHoursDisplay.split('•')[1]?.trim() || cafeConfig.openingHoursDisplay}
         </span>
         <span style={{ fontSize: "0.75rem", color: "var(--color-muted)" }}>Every day of the week</span>
-      </motion.div>
+      </m.div>
 
       <style>{`
         @media (max-width: 1024px) {
@@ -271,5 +273,6 @@ export default function HeroSection() {
         }
       `}</style>
     </section>
+    </LazyMotion>
   );
 }
